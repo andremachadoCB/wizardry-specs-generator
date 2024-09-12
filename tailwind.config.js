@@ -51,6 +51,12 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // New colors based on the image
+        crowdbotics: {
+          background: "#A7C7E7", // Light blue background
+          text: "#000000", // Black text
+          button: "#FFD700", // Yellow button
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

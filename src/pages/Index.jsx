@@ -77,7 +77,7 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 bg-crowdbotics-background text-crowdbotics-text">
       <h1 className="text-3xl font-bold mb-6">Mainframe Modernization Wizard</h1>
       
       <RepoSelector
@@ -86,7 +86,7 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
       />
 
       <Button 
-        className="mt-4 mb-6"
+        className="mt-4 mb-6 bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90"
         onClick={handleGenerateSpecs}
         disabled={!selectedRepo || isLoading}
       >
@@ -100,7 +100,7 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
         )}
       </Button>
 
-      <Tabs defaultValue="prd">
+      <Tabs defaultValue="prd" className="bg-white rounded-lg p-4">
         <TabsList>
           <TabsTrigger value="prd">PRD</TabsTrigger>
           <TabsTrigger value="features">Features</TabsTrigger>
