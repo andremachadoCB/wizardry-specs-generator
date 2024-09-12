@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RepoSelector from '../components/RepoSelector';
 import ArtifactPanel from '../components/ArtifactPanel';
+import Navbar from '../components/Navbar';
 import { Loader2 } from 'lucide-react';
 
 const Index = () => {
@@ -77,57 +78,58 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
   };
 
   return (
-    <div className="container mx-auto p-4 bg-crowdbotics-background text-crowdbotics-text">
-      <h1 className="text-3xl font-bold mb-6">Mainframe Modernization Wizard</h1>
-      
-      <RepoSelector
-        selectedRepo={selectedRepo}
-        onSelectRepo={setSelectedRepo}
-      />
+    <div className="bg-crowdbotics-background text-crowdbotics-text min-h-screen">
+      <Navbar />
+      <div className="container mx-auto p-4">
+        <RepoSelector
+          selectedRepo={selectedRepo}
+          onSelectRepo={setSelectedRepo}
+        />
 
-      <Button 
-        className="mt-4 mb-6 bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90"
-        onClick={handleGenerateSpecs}
-        disabled={!selectedRepo || isLoading}
-      >
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Generating...
-          </>
-        ) : (
-          'Generate Specs'
-        )}
-      </Button>
+        <Button 
+          className="mt-4 mb-6 bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90"
+          onClick={handleGenerateSpecs}
+          disabled={!selectedRepo || isLoading}
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            'Generate Specs'
+          )}
+        </Button>
 
-      <Tabs defaultValue="prd" className="bg-white rounded-lg p-4">
-        <TabsList>
-          <TabsTrigger value="prd">PRD</TabsTrigger>
-          <TabsTrigger value="features">Features</TabsTrigger>
-          <TabsTrigger value="userTypes">User Types</TabsTrigger>
-          <TabsTrigger value="dataModels">Data Models</TabsTrigger>
-          <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
-          <TabsTrigger value="tests">Tests</TabsTrigger>
-        </TabsList>
-        <TabsContent value="prd">
-          <ArtifactPanel title="Product Requirements Document" content={artifacts.prd} />
-        </TabsContent>
-        <TabsContent value="features">
-          <ArtifactPanel title="List of Features" content={artifacts.features} />
-        </TabsContent>
-        <TabsContent value="userTypes">
-          <ArtifactPanel title="User Types" content={artifacts.userTypes} />
-        </TabsContent>
-        <TabsContent value="dataModels">
-          <ArtifactPanel title="Data Models" content={artifacts.dataModels} />
-        </TabsContent>
-        <TabsContent value="knowledgeGraph">
-          <ArtifactPanel title="Knowledge Graph" content={artifacts.knowledgeGraph} />
-        </TabsContent>
-        <TabsContent value="tests">
-          <ArtifactPanel title="Tests" content={artifacts.tests} />
-        </TabsContent>
-      </Tabs>
+        <Tabs defaultValue="prd" className="bg-white rounded-lg p-4">
+          <TabsList>
+            <TabsTrigger value="prd">PRD</TabsTrigger>
+            <TabsTrigger value="features">Features</TabsTrigger>
+            <TabsTrigger value="userTypes">User Types</TabsTrigger>
+            <TabsTrigger value="dataModels">Data Models</TabsTrigger>
+            <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
+            <TabsTrigger value="tests">Tests</TabsTrigger>
+          </TabsList>
+          <TabsContent value="prd">
+            <ArtifactPanel title="Product Requirements Document" content={artifacts.prd} />
+          </TabsContent>
+          <TabsContent value="features">
+            <ArtifactPanel title="List of Features" content={artifacts.features} />
+          </TabsContent>
+          <TabsContent value="userTypes">
+            <ArtifactPanel title="User Types" content={artifacts.userTypes} />
+          </TabsContent>
+          <TabsContent value="dataModels">
+            <ArtifactPanel title="Data Models" content={artifacts.dataModels} />
+          </TabsContent>
+          <TabsContent value="knowledgeGraph">
+            <ArtifactPanel title="Knowledge Graph" content={artifacts.knowledgeGraph} />
+          </TabsContent>
+          <TabsContent value="tests">
+            <ArtifactPanel title="Tests" content={artifacts.tests} />
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };
