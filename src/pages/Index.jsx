@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RepoSelector from '../components/RepoSelector';
+import RepoFileList from '../components/RepoFileList';
 import ArtifactPanel from '../components/ArtifactPanel';
 import Navbar from '../components/Navbar';
 import { Loader2 } from 'lucide-react';
@@ -9,6 +10,7 @@ import { Loader2 } from 'lucide-react';
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [artifacts, setArtifacts] = useState({
     prd: '',
     features: [],
@@ -17,6 +19,19 @@ const Index = () => {
     knowledgeGraph: '',
     tests: []
   });
+
+  const mockedFiles = [
+    'src/main/cobol/CBLACC00.cbl',
+    'src/main/cobol/CBLACT00.cbl',
+    'src/main/cobol/CBLCRD00.cbl',
+    'src/main/cobol/CBLCUS00.cbl',
+    'src/main/cobol/CBLTRS00.cbl',
+    'src/main/jcl/ACCTREPT.jcl',
+    'src/main/jcl/CARDTRN.jcl',
+    'src/main/jcl/CUSTFILE.jcl',
+    'README.md',
+    'pom.xml'
+  ];
 
   const mockedData = {
     prd: `# Product Requirements Document
@@ -77,6 +92,12 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
     }, 2000);
   };
 
+  const handleFileSelect = (file) => {
+    setSelectedFile(file);
+    // Here you would typically trigger an analysis of the selected file
+    console.log(`File selected for analysis: ${file}`);
+  };
+
   return (
     <div className="bg-crowdbotics-background text-crowdbotics-text min-h-screen">
       <Navbar />
@@ -86,10 +107,15 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
           onSelectRepo={setSelectedRepo}
         />
 
+        <RepoFileList
+          files={mockedFiles}
+          onSelectFile={handleFileSelect}
+        />
+
         <Button 
           className="mt-4 mb-6 bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90"
           onClick={handleGenerateSpecs}
-          disabled={!selectedRepo || isLoading}
+          disabled={!selectedRepo || isLoading || !selectedFile}
         >
           {isLoading ? (
             <>
