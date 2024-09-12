@@ -5,6 +5,8 @@ import ArtifactPanel from '../components/ArtifactPanel';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import { Loader2 } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
@@ -100,11 +102,20 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
   return (
     <div className="bg-crowdbotics-background text-crowdbotics-text min-h-screen flex flex-col">
       <Navbar />
+      <div className="p-4 bg-white">
+        <Label htmlFor="repo-url">GitHub Repository URL</Label>
+        <Input
+          id="repo-url"
+          type="text"
+          placeholder="https://github.com/username/repo"
+          value={selectedRepo}
+          onChange={(e) => setSelectedRepo(e.target.value)}
+          className="w-full"
+        />
+      </div>
       <div className="flex flex-1 overflow-hidden">
         <div className="w-1/5 bg-gray-100">
           <Sidebar
-            selectedRepo={selectedRepo}
-            onSelectRepo={setSelectedRepo}
             files={mockedFiles}
             onSelectFile={handleFileSelect}
           />
