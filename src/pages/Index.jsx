@@ -159,7 +159,7 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
                       Generating...
                     </>
                   ) : (
-                    'Generate Specs'
+                    'GENERATE SPECS'
                   )}
                 </Button>
               </div>
