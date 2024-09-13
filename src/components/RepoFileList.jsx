@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import TreeView from '@mui/lab/TreeView';
-import TreeItem from '@mui/lab/TreeItem';
+import TreeView from '@mui/material/TreeView';
+import TreeItem from '@mui/material/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { ScrollArea } from "@/components/ui/scroll-area";
