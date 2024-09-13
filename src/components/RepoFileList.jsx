@@ -1,25 +1,50 @@
 import React, { useState } from 'react';
-import TreeView from '@mui/material/TreeView';
-import TreeItem from '@mui/material/TreeItem';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ChevronDown, ChevronRight, Folder, File } from 'lucide-react';
+
+const TreeNode = ({ node, onSelectFile }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleOpen = () => setIsOpen(!isOpen);
+
+  const handleFileSelect = () => {
+    if (!node.children) {
+      onSelectFile(node.id);
+    }
+  };
+
+  return (
+    <div>
+      <div 
+        className={`flex items-center cursor-pointer ${node.children ? 'font-semibold' : ''}`}
+        onClick={node.children ? toggleOpen : handleFileSelect}
+      >
+        {node.children ? (
+          isOpen ? <ChevronDown className="w-4 h-4 mr-1" /> : <ChevronRight className="w-4 h-4 mr-1" />
+        ) : (
+          <File className="w-4 h-4 mr-1" />
+        )}
+        {node.children ? <Folder className="w-4 h-4 mr-1" /> : null}
+        <span>{node.name}</span>
+      </div>
+      {isOpen && node.children && (
+        <div className="ml-4">
+          {node.children.map((childNode) => (
+            <TreeNode key={childNode.id} node={childNode} onSelectFile={onSelectFile} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const RepoFileList = ({ files, onSelectFile }) => {
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const handleFileSelect = (event, nodeId) => {
+  const handleFileSelect = (nodeId) => {
     setSelectedFile(nodeId);
     onSelectFile(nodeId);
   };
-
-  const renderTree = (nodes) => (
-    <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-      {Array.isArray(nodes.children)
-        ? nodes.children.map((node) => renderTree(node))
-        : null}
-    </TreeItem>
-  );
 
   const buildFileTree = (files) => {
     const root = { id: 'root', name: 'Root', children: [] };
@@ -29,13 +54,13 @@ const RepoFileList = ({ files, onSelectFile }) => {
       parts.forEach((part, index) => {
         let existingNode = currentNode.children.find(child => child.name === part);
         if (!existingNode) {
-          existingNode = { id: parts.slice(0, index + 1).join('/'), name: part, children: [] };
+          existingNode = { id: parts.slice(0, index + 1).join('/'), name: part, children: index < parts.length - 1 ? [] : null };
           currentNode.children.push(existingNode);
         }
         currentNode = existingNode;
       });
     });
-    return root;
+    return root.children;
   };
 
   const fileTree = buildFileTree(files);
@@ -44,15 +69,9 @@ const RepoFileList = ({ files, onSelectFile }) => {
     <div className="mt-4">
       <h3 className="text-lg font-semibold mb-2">Available Files:</h3>
       <ScrollArea className="h-[calc(100vh-200px)] w-full border rounded-md p-4">
-        <TreeView
-          aria-label="file system navigator"
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
-          onNodeSelect={handleFileSelect}
-          selected={selectedFile}
-        >
-          {renderTree(fileTree)}
-        </TreeView>
+        {fileTree.map((node) => (
+          <TreeNode key={node.id} node={node} onSelectFile={handleFileSelect} />
+        ))}
       </ScrollArea>
       {selectedFile && (
         <p className="mt-2">Selected file: <span className="font-semibold">{selectedFile}</span></p>
