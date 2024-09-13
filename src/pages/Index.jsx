@@ -145,10 +145,11 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
               <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
               <TabsTrigger value="tests">Tests</TabsTrigger>
             </TabsList>
-            <TabsContent value="prd">
-              <div className="mb-4">
+            <TabsContent value="prd" className="flex flex-col h-full">
+              <ArtifactPanel title="Product Requirements Document" content={artifacts.prd} />
+              <div className="mt-auto pt-4">
                 <Button 
-                  className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase"
+                  className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase w-full"
                   onClick={handleGenerateSpecs}
                   disabled={!selectedRepo || isLoading || !selectedFile}
                 >
@@ -162,7 +163,6 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
                   )}
                 </Button>
               </div>
-              <ArtifactPanel title="Product Requirements Document" content={artifacts.prd} />
             </TabsContent>
             <TabsContent value="features">
               <ArtifactPanel title="List of Features" content={artifacts.features} />
