@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ArtifactPanel from '../components/ArtifactPanel';
 import Navbar from '../components/Navbar';
-import Sidebar from '../components/Sidebar';
+import RepoFileList from '../components/RepoFileList';
 import { Loader2 } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +13,6 @@ const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [files, setFiles] = useState([]);
   const [artifacts, setArtifacts] = useState({
     prd: '',
     features: [],
@@ -22,19 +21,6 @@ const Index = () => {
     knowledgeGraph: '',
     tests: []
   });
-
-  const mockedFiles = [
-    'src/main/cobol/CBLACC00.cbl',
-    'src/main/cobol/CBLACT00.cbl',
-    'src/main/cobol/CBLCRD00.cbl',
-    'src/main/cobol/CBLCUS00.cbl',
-    'src/main/cobol/CBLTRS00.cbl',
-    'src/main/jcl/ACCTREPT.jcl',
-    'src/main/jcl/CARDTRN.jcl',
-    'src/main/jcl/CUSTFILE.jcl',
-    'README.md',
-    'pom.xml'
-  ];
 
   const mockedData = {
     prd: `# Product Requirements Document
@@ -101,11 +87,6 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
     console.log(`File selected for analysis: ${file}`);
   };
 
-  const handleLoadFiles = () => {
-    // In a real scenario, this would fetch files from the repository
-    setFiles(mockedFiles);
-  };
-
   return (
     <div className="bg-crowdbotics-background text-crowdbotics-text min-h-screen flex flex-col">
       <Navbar />
@@ -123,16 +104,7 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
       <Separator className="my-4" />
       <div className="flex flex-1 overflow-hidden">
         <div className="w-1/5 bg-gray-100 p-4">
-          <Button 
-            onClick={handleLoadFiles}
-            className="w-full mb-4"
-          >
-            Load Files
-          </Button>
-          <Sidebar
-            files={files}
-            onSelectFile={handleFileSelect}
-          />
+          <RepoFileList onSelectFile={handleFileSelect} />
         </div>
         <Separator orientation="vertical" className="mx-4" />
         <div className="w-4/5 p-4 overflow-auto">
