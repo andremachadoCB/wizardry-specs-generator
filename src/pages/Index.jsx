@@ -7,11 +7,13 @@ import Sidebar from '../components/Sidebar';
 import { Loader2 } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const [artifacts, setArtifacts] = useState({
     prd: '',
     features: [],
@@ -99,10 +101,15 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
     console.log(`File selected for analysis: ${file}`);
   };
 
+  const handleLoadFiles = () => {
+    // In a real scenario, this would fetch files from the repository
+    setFiles(mockedFiles);
+  };
+
   return (
     <div className="bg-crowdbotics-background text-crowdbotics-text min-h-screen flex flex-col">
       <Navbar />
-      <div className="p-4 bg-white">
+      <div className="p-4 bg-white w-full">
         <Label htmlFor="repo-url">GitHub Repository URL</Label>
         <Input
           id="repo-url"
@@ -113,29 +120,22 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
           className="w-full"
         />
       </div>
+      <Separator className="my-4" />
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-1/5 bg-gray-100">
+        <div className="w-1/5 bg-gray-100 p-4">
+          <Button 
+            onClick={handleLoadFiles}
+            className="w-full mb-4"
+          >
+            Load Files
+          </Button>
           <Sidebar
-            files={mockedFiles}
+            files={files}
             onSelectFile={handleFileSelect}
           />
         </div>
+        <Separator orientation="vertical" className="mx-4" />
         <div className="w-4/5 p-4 overflow-auto">
-          <Button 
-            className="mb-6 bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90"
-            onClick={handleGenerateSpecs}
-            disabled={!selectedRepo || isLoading || !selectedFile}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              'Generate Specs'
-            )}
-          </Button>
-
           <Tabs defaultValue="prd" className="bg-white rounded-lg p-4">
             <TabsList>
               <TabsTrigger value="prd">PRD</TabsTrigger>
@@ -146,6 +146,22 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
               <TabsTrigger value="tests">Tests</TabsTrigger>
             </TabsList>
             <TabsContent value="prd">
+              <div className="mb-4">
+                <Button 
+                  className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase"
+                  onClick={handleGenerateSpecs}
+                  disabled={!selectedRepo || isLoading || !selectedFile}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    'Generate Specs'
+                  )}
+                </Button>
+              </div>
               <ArtifactPanel title="Product Requirements Document" content={artifacts.prd} />
             </TabsContent>
             <TabsContent value="features">
