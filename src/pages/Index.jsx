@@ -107,9 +107,9 @@ const Index = () => {
                 <Button 
                   className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase w-full"
                   onClick={handleGenerateSpecs}
-                  disabled={!selectedRepo || fileAnalysisMutation.isLoading || !selectedFile}
+                  disabled={!selectedRepo || fileAnalysisMutation.isPending || !selectedFile}
                 >
-                  {fileAnalysisMutation.isLoading ? (
+                  {fileAnalysisMutation.isPending ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Generating...
