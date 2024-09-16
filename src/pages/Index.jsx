@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ArtifactPanel from '../components/ArtifactPanel';
 import Navbar from '../components/Navbar';
 import RepoFileList from '../components/RepoFileList';
+import FilePreview from '../components/FilePreview';
 import { Loader2 } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,7 @@ const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
+  const [fileContent, setFileContent] = useState('');
 
   const fileAnalysisMutation = useMutation({
     mutationFn: ({ url, file_path }) => fetchWithApiUrl('/api/repos/file/reason', {
@@ -27,21 +29,21 @@ const Index = () => {
     onSuccess: (data) => {
       setArtifacts({
         prd: data.file_summary,
-        features: data.user_stories.split('\n'),
+        features: JSON.stringify(data.analysis, null, 2),
         userTypes: data.user_types,
         dataModels: Object.keys(data.analysis),
-        knowledgeGraph: JSON.stringify(data.analysis, null, 2),
-        tests: ['Test 1', 'Test 2'] // You might want to generate these based on the analysis
+        knowledgeGraph: data.user_stories.split('\n'),
+        tests: ['Test 1', 'Test 2']
       });
     },
   });
 
   const [artifacts, setArtifacts] = useState({
     prd: '',
-    features: [],
+    features: '',
     userTypes: [],
     dataModels: [],
-    knowledgeGraph: '',
+    knowledgeGraph: [],
     tests: []
   });
 
@@ -51,13 +53,25 @@ const Index = () => {
         await fileAnalysisMutation.mutateAsync({ url: selectedRepo, file_path: selectedFile });
       } catch (error) {
         console.error('Error generating specs:', error);
-        // Handle error if needed
       }
     }
   };
 
-  const handleFileSelect = (file) => {
+  const handleFileSelect = async (file) => {
     setSelectedFile(file);
+    try {
+      const response = await fetchWithApiUrl('/api/repos/file/content', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: selectedRepo, file_path: file }),
+      });
+      setFileContent(response.content);
+    } catch (error) {
+      console.error('Error fetching file content:', error);
+      setFileContent('Error loading file content');
+    }
   };
 
   const handleLoadFiles = () => {
@@ -99,6 +113,7 @@ const Index = () => {
         </div>
         <Separator orientation="vertical" className="mx-4" />
         <div className="w-4/5 p-4 overflow-auto">
+          <FilePreview content={fileContent} />
           <Tabs defaultValue="prd" className="bg-white rounded-lg p-4">
             <TabsList>
               <TabsTrigger value="prd">PRD</TabsTrigger>
@@ -128,7 +143,7 @@ const Index = () => {
               <ArtifactPanel title="Product Requirements Document" content={artifacts.prd} />
             </TabsContent>
             <TabsContent value="features">
-              <ArtifactPanel title="List of Features" content={artifacts.features} />
+              <ArtifactPanel title="Features" content={artifacts.features} />
             </TabsContent>
             <TabsContent value="userTypes">
               <ArtifactPanel title="User Types" content={artifacts.userTypes} />
