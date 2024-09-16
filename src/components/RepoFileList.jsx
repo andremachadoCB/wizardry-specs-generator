@@ -4,7 +4,7 @@ import { ChevronDown, ChevronRight, Folder, File } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchWithApiUrl } from '../utils/api';
 
-const TreeNode = ({ node, onSelectFile }) => {
+const TreeNode = ({ node, onSelectFile, selectedFile }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleOpen = () => setIsOpen(!isOpen);
@@ -15,10 +15,12 @@ const TreeNode = ({ node, onSelectFile }) => {
     }
   };
 
+  const isSelected = selectedFile === node.path;
+
   return (
     <div>
       <div 
-        className={`flex items-center cursor-pointer ${node.type === 'tree' ? 'font-semibold' : ''}`}
+        className={`flex items-center cursor-pointer ${node.type === 'tree' ? 'font-semibold' : ''} ${isSelected ? 'bg-blue-100 text-blue-600' : ''}`}
         onClick={node.type === 'tree' ? toggleOpen : handleFileSelect}
       >
         {node.type === 'tree' ? (
@@ -32,7 +34,12 @@ const TreeNode = ({ node, onSelectFile }) => {
       {isOpen && node.type === 'tree' && node.children && (
         <div className="ml-4">
           {Object.values(node.children).map((childNode) => (
-            <TreeNode key={childNode.path} node={childNode} onSelectFile={onSelectFile} />
+            <TreeNode 
+              key={childNode.path} 
+              node={childNode} 
+              onSelectFile={onSelectFile} 
+              selectedFile={selectedFile}
+            />
           ))}
         </div>
       )}
@@ -40,7 +47,7 @@ const TreeNode = ({ node, onSelectFile }) => {
   );
 };
 
-const RepoFileList = ({ repoUrl, onSelectFile, shouldLoadFiles }) => {
+const RepoFileList = ({ repoUrl, onSelectFile, shouldLoadFiles, selectedFile }) => {
   const { data: fileStructure, isLoading, error } = useQuery({
     queryKey: ['repoTree', repoUrl],
     queryFn: () => fetchWithApiUrl('/api/repos/tree', {
@@ -63,7 +70,12 @@ const RepoFileList = ({ repoUrl, onSelectFile, shouldLoadFiles }) => {
       <ScrollArea className="h-[calc(100vh-200px)] w-full border rounded-md p-4">
         {fileStructure ? (
           Object.values(fileStructure).map((node) => (
-            <TreeNode key={node.path} node={node} onSelectFile={onSelectFile} />
+            <TreeNode 
+              key={node.path} 
+              node={node} 
+              onSelectFile={onSelectFile} 
+              selectedFile={selectedFile}
+            />
           ))
         ) : (
           <p>No files to display</p>
