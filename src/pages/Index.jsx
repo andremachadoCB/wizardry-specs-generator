@@ -60,7 +60,7 @@ const Index = () => {
   const handleFileSelect = async (file) => {
     setSelectedFile(file);
     try {
-      const response = await fetchWithApiUrl('/api/repos/file/content', {
+      const response = await fetchWithApiUrl('/api/repos/file/preview', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
