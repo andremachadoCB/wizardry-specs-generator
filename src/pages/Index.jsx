@@ -8,11 +8,40 @@ import { Loader2 } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { useQuery, useMutation } from '@tanstack/react-query';
+
+const fetchFileAnalysis = async ({ url, file_path }) => {
+  const response = await fetch('/api/repos/file/reason', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ url, file_path }),
+  });
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  return response.json();
+};
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+
+  const fileAnalysisMutation = useMutation({
+    mutationFn: fetchFileAnalysis,
+    onSuccess: (data) => {
+      setArtifacts({
+        prd: data.file_summary,
+        features: data.user_stories.split('\n'),
+        userTypes: data.user_types,
+        dataModels: Object.keys(data.analysis),
+        knowledgeGraph: JSON.stringify(data.analysis, null, 2),
+        tests: ['Test 1', 'Test 2'] // You might want to generate these based on the analysis
+      });
+    },
+  });
+
   const [artifacts, setArtifacts] = useState({
     prd: '',
     features: [],
@@ -22,69 +51,14 @@ const Index = () => {
     tests: []
   });
 
-  const mockedData = {
-    prd: `# Product Requirements Document
-
-## Overview
-This PRD outlines the requirements for modernizing the AWS Mainframe Modernization Card Demo application.
-
-## Objectives
-1. Migrate the existing COBOL-based card processing system to a modern, cloud-native architecture.
-2. Improve scalability, maintainability, and performance of the application.
-3. Enhance user experience for both customers and bank tellers.
-
-## Key Features
-1. Account Management
-2. Transaction Processing
-3. Customer Information System
-4. Reporting and Analytics
-
-## Success Criteria
-1. Successful migration of all existing functionality
-2. Improved system performance (response times under 200ms for 99% of transactions)
-3. 99.99% uptime
-4. Compliance with all relevant financial regulations`,
-    features: [
-      'Account Creation and Management',
-      'Credit and Debit Card Transactions',
-      'Balance Inquiries',
-      'Statement Generation',
-      'Fraud Detection',
-      'Customer Support Interface',
-      'Reporting and Analytics Dashboard'
-    ],
-    userTypes: ['Customer', 'Bank Teller'],
-    dataModels: [
-      'Account (ACCFILE)',
-      'Transaction (TRANFILE)',
-      'Customer (CUSTFILE)',
-      'Card (CARDFILE)'
-    ],
-    knowledgeGraph: 'Knowledge Graph visualization placeholder',
-    tests: [
-      'Test account creation process',
-      'Verify transaction processing accuracy',
-      'Check balance inquiry functionality',
-      'Validate statement generation',
-      'Test fraud detection algorithms',
-      'Verify customer support interface usability',
-      'Ensure reporting dashboard accuracy'
-    ]
-  };
-
   const handleGenerateSpecs = async () => {
-    setIsLoading(true);
-    // Simulating API call with setTimeout
-    setTimeout(() => {
-      setArtifacts(mockedData);
-      setIsLoading(false);
-    }, 2000);
+    if (selectedFile) {
+      fileAnalysisMutation.mutate({ url: selectedRepo, file_path: selectedFile });
+    }
   };
 
   const handleFileSelect = (file) => {
     setSelectedFile(file);
-    // Here you would typically trigger an analysis of the selected file
-    console.log(`File selected for analysis: ${file}`);
   };
 
   return (
@@ -104,7 +78,7 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
       <Separator className="my-4" />
       <div className="flex flex-1 overflow-hidden">
         <div className="w-1/5 bg-gray-100 p-4">
-          <RepoFileList onSelectFile={handleFileSelect} />
+          <RepoFileList repoUrl={selectedRepo} onSelectFile={handleFileSelect} />
         </div>
         <Separator orientation="vertical" className="mx-4" />
         <div className="w-4/5 p-4 overflow-auto">
@@ -123,9 +97,9 @@ This PRD outlines the requirements for modernizing the AWS Mainframe Modernizati
                 <Button 
                   className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase w-full"
                   onClick={handleGenerateSpecs}
-                  disabled={!selectedRepo || isLoading || !selectedFile}
+                  disabled={!selectedRepo || fileAnalysisMutation.isLoading || !selectedFile}
                 >
-                  {isLoading ? (
+                  {fileAnalysisMutation.isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Generating...

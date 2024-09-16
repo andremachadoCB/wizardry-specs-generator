@@ -1,83 +1,20 @@
 import React, { useState } from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronDown, ChevronRight, Folder, File } from 'lucide-react';
+import { useQuery, useMutation } from '@tanstack/react-query';
 
-const mockedFileStructure = {
-  "CODE_OF_CONDUCT.md": {
-    "name": "CODE_OF_CONDUCT.md",
-    "path": "CODE_OF_CONDUCT.md",
-    "type": "blob",
-    "children": {}
-  },
-  "CONTRIBUTING.md": {
-    "name": "CONTRIBUTING.md",
-    "path": "CONTRIBUTING.md",
-    "type": "blob",
-    "children": {}
-  },
-  "LICENSE": {
-    "name": "LICENSE",
-    "path": "LICENSE",
-    "type": "blob",
-    "children": {}
-  },
-  "NOTICE": {
-    "name": "NOTICE",
-    "path": "NOTICE",
-    "type": "blob",
-    "children": {}
-  },
-  "README.md": {
-    "name": "README.md",
-    "path": "README.md",
-    "type": "blob",
-    "children": {}
-  },
-  "app": {
-    "name": "app",
-    "path": "app",
-    "type": "tree",
-    "children": {
-      "bms": {
-        "name": "bms",
-        "path": "app/bms",
-        "type": "tree",
-        "children": {
-          "COACTUP.bms": {
-            "name": "COACTUP.bms",
-            "path": "app/bms/COACTUP.bms",
-            "type": "blob",
-            "children": {}
-          },
-          "COACTVW.bms": {
-            "name": "COACTVW.bms",
-            "path": "app/bms/COACTVW.bms",
-            "type": "blob",
-            "children": {}
-          }
-        }
-      },
-      "cbl": {
-        "name": "cbl",
-        "path": "app/cbl",
-        "type": "tree",
-        "children": {
-          "CBACT01C.cbl": {
-            "name": "CBACT01C.cbl",
-            "path": "app/cbl/CBACT01C.cbl",
-            "type": "blob",
-            "children": {}
-          },
-          "CBACT02C.cbl": {
-            "name": "CBACT02C.cbl",
-            "path": "app/cbl/CBACT02C.cbl",
-            "type": "blob",
-            "children": {}
-          }
-        }
-      }
-    }
+const fetchRepoTree = async (url) => {
+  const response = await fetch('/api/repos/tree', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ url }),
+  });
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
   }
+  return response.json();
 };
 
 const TreeNode = ({ node, onSelectFile }) => {
@@ -116,40 +53,28 @@ const TreeNode = ({ node, onSelectFile }) => {
   );
 };
 
-const RepoFileList = ({ onSelectFile }) => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [fileStructure, setFileStructure] = useState({});
+const RepoFileList = ({ repoUrl, onSelectFile }) => {
+  const { data: fileStructure, isLoading, error } = useQuery({
+    queryKey: ['repoTree', repoUrl],
+    queryFn: () => fetchRepoTree(repoUrl),
+    enabled: !!repoUrl,
+  });
 
-  const handleFileSelect = (path) => {
-    setSelectedFile(path);
-    onSelectFile(path);
-  };
-
-  const handleLoadFiles = () => {
-    setFileStructure(mockedFileStructure);
-  };
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div className="mt-4">
       <h3 className="text-lg font-semibold mb-2">Repository Files:</h3>
-      <button
-        onClick={handleLoadFiles}
-        className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase w-full mb-4"
-      >
-        Load Files
-      </button>
       <ScrollArea className="h-[calc(100vh-200px)] w-full border rounded-md p-4">
-        {Object.keys(fileStructure).length > 0 ? (
+        {fileStructure ? (
           Object.values(fileStructure).map((node) => (
-            <TreeNode key={node.path} node={node} onSelectFile={handleFileSelect} />
+            <TreeNode key={node.path} node={node} onSelectFile={onSelectFile} />
           ))
         ) : (
           <p>No files to display</p>
         )}
       </ScrollArea>
-      {selectedFile && (
-        <p className="mt-2">Selected file: <span className="font-semibold">{selectedFile}</span></p>
-      )}
     </div>
   );
 };
