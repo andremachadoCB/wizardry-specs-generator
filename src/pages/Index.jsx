@@ -9,13 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { fetchWithApiUrl, useApiUrl } from '../utils/api';
+import { fetchWithApiUrl } from '../utils/api';
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
-  const [apiUrl, setApiUrl] = useApiUrl();
 
   const fileAnalysisMutation = useMutation({
     mutationFn: ({ url, file_path }) => fetchWithApiUrl('/api/repos/file/reason', {
@@ -60,23 +59,10 @@ const Index = () => {
     setShouldLoadFiles(true);
   };
 
-  const handleApiUrlChange = (e) => {
-    setApiUrl(e.target.value);
-  };
-
   return (
     <div className="bg-crowdbotics-background text-crowdbotics-text min-h-screen flex flex-col">
       <Navbar />
       <div className="p-4 bg-white w-full">
-        <Label htmlFor="api-url">API URL</Label>
-        <Input
-          id="api-url"
-          type="text"
-          placeholder="http://127.0.0.1:8000"
-          value={apiUrl}
-          onChange={handleApiUrlChange}
-          className="w-full mb-4"
-        />
         <Label htmlFor="repo-url">GitHub Repository URL</Label>
         <Input
           id="repo-url"
