@@ -2,20 +2,7 @@ import React, { useState } from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronDown, ChevronRight, Folder, File } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-
-const fetchRepoTree = async (url) => {
-  const response = await fetch('/api/repos/tree', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ url }),
-  });
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
-};
+import { fetchWithApiUrl } from '../utils/api';
 
 const TreeNode = ({ node, onSelectFile }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -56,7 +43,13 @@ const TreeNode = ({ node, onSelectFile }) => {
 const RepoFileList = ({ repoUrl, onSelectFile, shouldLoadFiles }) => {
   const { data: fileStructure, isLoading, error } = useQuery({
     queryKey: ['repoTree', repoUrl],
-    queryFn: () => fetchRepoTree(repoUrl),
+    queryFn: () => fetchWithApiUrl('/api/repos/tree', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url: repoUrl }),
+    }),
     enabled: !!repoUrl && shouldLoadFiles,
   });
 

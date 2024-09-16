@@ -9,28 +9,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useQuery, useMutation } from '@tanstack/react-query';
-
-const fetchFileAnalysis = async ({ url, file_path }) => {
-  const response = await fetch('/api/repos/file/reason', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ url, file_path }),
-  });
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
-};
+import { fetchWithApiUrl, useApiUrl } from '../utils/api';
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
+  const [apiUrl, setApiUrl] = useApiUrl();
 
   const fileAnalysisMutation = useMutation({
-    mutationFn: fetchFileAnalysis,
+    mutationFn: ({ url, file_path }) => fetchWithApiUrl('/api/repos/file/reason', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url, file_path }),
+    }),
     onSuccess: (data) => {
       setArtifacts({
         prd: data.file_summary,
@@ -66,10 +60,23 @@ const Index = () => {
     setShouldLoadFiles(true);
   };
 
+  const handleApiUrlChange = (e) => {
+    setApiUrl(e.target.value);
+  };
+
   return (
     <div className="bg-crowdbotics-background text-crowdbotics-text min-h-screen flex flex-col">
       <Navbar />
       <div className="p-4 bg-white w-full">
+        <Label htmlFor="api-url">API URL</Label>
+        <Input
+          id="api-url"
+          type="text"
+          placeholder="http://127.0.0.1:8000"
+          value={apiUrl}
+          onChange={handleApiUrlChange}
+          className="w-full mb-4"
+        />
         <Label htmlFor="repo-url">GitHub Repository URL</Label>
         <Input
           id="repo-url"
