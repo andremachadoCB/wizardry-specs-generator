@@ -83,7 +83,12 @@ const Index = () => {
           >
             Load Files
           </Button>
-          <RepoFileList repoUrl={selectedRepo} onSelectFile={handleFileSelect} shouldLoadFiles={shouldLoadFiles} />
+          <RepoFileList 
+            repoUrl={selectedRepo} 
+            onSelectFile={handleFileSelect} 
+            shouldLoadFiles={shouldLoadFiles} 
+            selectedFile={selectedFile}
+          />
         </div>
         <Separator orientation="vertical" className="mx-4" />
         <div className="w-4/5 p-4 overflow-auto">
