@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronDown, ChevronRight, Folder, File } from 'lucide-react';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 const fetchRepoTree = async (url) => {
   const response = await fetch('/api/repos/tree', {
@@ -53,13 +53,14 @@ const TreeNode = ({ node, onSelectFile }) => {
   );
 };
 
-const RepoFileList = ({ repoUrl, onSelectFile }) => {
+const RepoFileList = ({ repoUrl, onSelectFile, shouldLoadFiles }) => {
   const { data: fileStructure, isLoading, error } = useQuery({
     queryKey: ['repoTree', repoUrl],
     queryFn: () => fetchRepoTree(repoUrl),
-    enabled: !!repoUrl,
+    enabled: !!repoUrl && shouldLoadFiles,
   });
 
+  if (!shouldLoadFiles) return null;
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 

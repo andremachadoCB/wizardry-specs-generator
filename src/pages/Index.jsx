@@ -27,6 +27,7 @@ const fetchFileAnalysis = async ({ url, file_path }) => {
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
+  const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
 
   const fileAnalysisMutation = useMutation({
     mutationFn: fetchFileAnalysis,
@@ -61,6 +62,10 @@ const Index = () => {
     setSelectedFile(file);
   };
 
+  const handleLoadFiles = () => {
+    setShouldLoadFiles(true);
+  };
+
   return (
     <div className="bg-crowdbotics-background text-crowdbotics-text min-h-screen flex flex-col">
       <Navbar />
@@ -78,7 +83,14 @@ const Index = () => {
       <Separator className="my-4" />
       <div className="flex flex-1 overflow-hidden">
         <div className="w-1/5 bg-gray-100 p-4">
-          <RepoFileList repoUrl={selectedRepo} onSelectFile={handleFileSelect} />
+          <Button 
+            className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase w-full mb-4"
+            onClick={handleLoadFiles}
+            disabled={!selectedRepo}
+          >
+            Load Files
+          </Button>
+          <RepoFileList repoUrl={selectedRepo} onSelectFile={handleFileSelect} shouldLoadFiles={shouldLoadFiles} />
         </div>
         <Separator orientation="vertical" className="mx-4" />
         <div className="w-4/5 p-4 overflow-auto">
