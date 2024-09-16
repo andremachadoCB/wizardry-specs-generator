@@ -47,7 +47,12 @@ const Index = () => {
 
   const handleGenerateSpecs = async () => {
     if (selectedFile) {
-      fileAnalysisMutation.mutate({ url: selectedRepo, file_path: selectedFile });
+      try {
+        await fileAnalysisMutation.mutateAsync({ url: selectedRepo, file_path: selectedFile });
+      } catch (error) {
+        console.error('Error generating specs:', error);
+        // Handle error if needed
+      }
     }
   };
 
@@ -58,6 +63,8 @@ const Index = () => {
   const handleLoadFiles = () => {
     setShouldLoadFiles(true);
   };
+
+  const isGenerateDisabled = !selectedRepo || !selectedFile || fileAnalysisMutation.isPending;
 
   return (
     <div className="bg-crowdbotics-background text-crowdbotics-text min-h-screen flex flex-col">
@@ -107,7 +114,7 @@ const Index = () => {
                 <Button 
                   className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase w-full"
                   onClick={handleGenerateSpecs}
-                  disabled={!selectedRepo || fileAnalysisMutation.isPending || !selectedFile}
+                  disabled={isGenerateDisabled}
                 >
                   {fileAnalysisMutation.isPending ? (
                     <>
