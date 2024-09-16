@@ -109,8 +109,7 @@ const Index = () => {
               <TabsTrigger value="tests">Tests</TabsTrigger>
             </TabsList>
             <TabsContent value="prd" className="flex flex-col h-full">
-              <ArtifactPanel title="Product Requirements Document" content={artifacts.prd} />
-              <div className="mt-auto pt-4">
+              <div className="mb-4">
                 <Button 
                   className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase w-full"
                   onClick={handleGenerateSpecs}
@@ -126,6 +125,7 @@ const Index = () => {
                   )}
                 </Button>
               </div>
+              <ArtifactPanel title="Product Requirements Document" content={artifacts.prd} />
             </TabsContent>
             <TabsContent value="features">
               <ArtifactPanel title="List of Features" content={artifacts.features} />
