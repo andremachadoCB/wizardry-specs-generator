@@ -29,10 +29,10 @@ const Index = () => {
     onSuccess: (data) => {
       setArtifacts({
         prd: data.file_summary,
-        features: JSON.stringify(data.analysis, null, 2),
+        features: data.user_stories.split('\n'),
         userTypes: data.user_types,
         dataModels: Object.keys(data.analysis),
-        knowledgeGraph: data.user_stories.split('\n'),
+        knowledgeGraph: JSON.stringify(data.analysis, null, 2),
         tests: ['Test 1', 'Test 2']
       });
     },
@@ -40,10 +40,10 @@ const Index = () => {
 
   const [artifacts, setArtifacts] = useState({
     prd: '',
-    features: '',
+    features: [],
     userTypes: [],
     dataModels: [],
-    knowledgeGraph: [],
+    knowledgeGraph: '',
     tests: []
   });
 
@@ -104,12 +104,13 @@ const Index = () => {
           >
             Load Files
           </Button>
-          <RepoFileList 
-            repoUrl={selectedRepo} 
-            onSelectFile={handleFileSelect} 
-            shouldLoadFiles={shouldLoadFiles} 
-            selectedFile={selectedFile}
-          />
+          {shouldLoadFiles && (
+            <RepoFileList 
+              repoUrl={selectedRepo} 
+              onSelectFile={handleFileSelect} 
+              selectedFile={selectedFile}
+            />
+          )}
         </div>
         <Separator orientation="vertical" className="mx-4" />
         <div className="w-4/5 p-4 overflow-auto">
