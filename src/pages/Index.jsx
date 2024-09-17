@@ -28,8 +28,8 @@ const Index = () => {
     }),
     onSuccess: (data) => {
       setArtifacts({
-        prd: data.file_summary,
-        features: JSON.stringify(data.analysis, null, 2),
+        technicalSummary: data.file_summary,
+        prd: JSON.stringify(data.analysis, null, 2),
         userTypes: data.user_types,
         dataModels: Object.keys(data.analysis),
         knowledgeGraph: data.user_stories.split('\n'),
@@ -39,8 +39,8 @@ const Index = () => {
   });
 
   const [artifacts, setArtifacts] = useState({
+    technicalSummary: '',
     prd: '',
-    features: '',
     userTypes: [],
     dataModels: [],
     knowledgeGraph: [],
@@ -116,36 +116,36 @@ const Index = () => {
         <Separator orientation="vertical" className="mx-4" />
         <div className="w-4/5 p-4 overflow-auto">
           <FilePreview content={fileContent} />
-          <Tabs defaultValue="prd" className="bg-white rounded-lg p-4">
+          <div className="mb-4 sticky top-0 bg-white z-10 p-4 shadow-md">
+            <Button 
+              className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase w-full"
+              onClick={handleGenerateSpecs}
+              disabled={isGenerateDisabled}
+            >
+              {fileAnalysisMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                'GENERATE SPECS'
+              )}
+            </Button>
+          </div>
+          <Tabs defaultValue="technicalSummary" className="bg-white rounded-lg p-4">
             <TabsList>
+              <TabsTrigger value="technicalSummary">Technical Summary</TabsTrigger>
               <TabsTrigger value="prd">PRD</TabsTrigger>
-              <TabsTrigger value="features">Features</TabsTrigger>
               <TabsTrigger value="userTypes">User Types</TabsTrigger>
               <TabsTrigger value="dataModels">Data Models</TabsTrigger>
               <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
               <TabsTrigger value="tests">Tests</TabsTrigger>
             </TabsList>
-            <TabsContent value="prd" className="flex flex-col h-full">
-              <div className="mb-4">
-                <Button 
-                  className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase w-full"
-                  onClick={handleGenerateSpecs}
-                  disabled={isGenerateDisabled}
-                >
-                  {fileAnalysisMutation.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating...
-                    </>
-                  ) : (
-                    'GENERATE SPECS'
-                  )}
-                </Button>
-              </div>
-              <ArtifactPanel title="Product Requirements Document" content={artifacts.prd} />
+            <TabsContent value="technicalSummary">
+              <ArtifactPanel title="Technical Summary" content={artifacts.technicalSummary} />
             </TabsContent>
-            <TabsContent value="features">
-              <ArtifactPanel title="Features" content={artifacts.features} />
+            <TabsContent value="prd">
+              <ArtifactPanel title="Product Requirements Document" content={artifacts.prd} />
             </TabsContent>
             <TabsContent value="userTypes">
               <ArtifactPanel title="User Types" content={artifacts.userTypes} />
