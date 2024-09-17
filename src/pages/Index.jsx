@@ -29,10 +29,10 @@ const Index = () => {
     onSuccess: (data) => {
       setArtifacts({
         prd: data.file_summary,
-        features: data.user_stories.split('\n'),
+        features: JSON.stringify(data.analysis, null, 2),
         userTypes: data.user_types,
         dataModels: Object.keys(data.analysis),
-        knowledgeGraph: JSON.stringify(data.analysis, null, 2),
+        knowledgeGraph: data.user_stories.split('\n'),
         tests: ['Test 1', 'Test 2']
       });
     },
@@ -40,10 +40,10 @@ const Index = () => {
 
   const [artifacts, setArtifacts] = useState({
     prd: '',
-    features: [],
+    features: '',
     userTypes: [],
     dataModels: [],
-    knowledgeGraph: '',
+    knowledgeGraph: [],
     tests: []
   });
 
@@ -108,6 +108,7 @@ const Index = () => {
             <RepoFileList 
               repoUrl={selectedRepo} 
               onSelectFile={handleFileSelect} 
+              shouldLoadFiles={shouldLoadFiles}
               selectedFile={selectedFile}
             />
           )}
