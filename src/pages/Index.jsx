@@ -5,13 +5,13 @@ import ArtifactPanel from '../components/ArtifactPanel';
 import Navbar from '../components/Navbar';
 import RepoFileList from '../components/RepoFileList';
 import FilePreview from '../components/FilePreview';
-import { Loader2 } from 'lucide-react';
+import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useMutation } from "@tanstack/react-query";
 import { fetchWithApiUrl } from '../utils/api';
-import { ForceGraph2D } from 'react-force-graph';
+import KnowledgeGraphComponent from '../components/KnowledgeGraphComponent';
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
@@ -54,20 +54,6 @@ const Index = () => {
     };
     return colorMap[type] || '#CCCCCC';
   };
-
-  const KnowledgeGraphComponent = ({ data }) => (
-    <div style={{ width: '100%', height: '600px' }}>
-      <ForceGraph2D
-        graphData={data}
-        nodeLabel="name"
-        nodeColor={node => node.color}
-        linkLabel="label"
-        linkDirectionalArrowLength={3.5}
-        linkDirectionalArrowRelPos={1}
-        linkCurvature={0.25}
-      />
-    </div>
-  );
 
   const fileAnalysisMutation = useMutation({
     mutationFn: ({ url, file_path }) => fetchWithApiUrl('/api/repos/file/reason', {
