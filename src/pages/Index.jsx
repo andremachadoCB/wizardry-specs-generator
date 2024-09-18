@@ -22,9 +22,7 @@ const Index = () => {
     technicalSummary: '',
     prd: '',
     userTypes: [],
-    dataModels: [],
     knowledgeGraph: { nodes: [], links: [] },
-    tests: []
   });
 
   const parseKnowledgeGraph = (graphData) => {
@@ -68,9 +66,7 @@ const Index = () => {
         technicalSummary: data.file_summary,
         prd: JSON.stringify(data.analysis, null, 2),
         userTypes: data.user_types,
-        dataModels: Object.keys(data.analysis),
         knowledgeGraph: parseKnowledgeGraph(data.graph),
-        tests: ['Test 1', 'Test 2']
       });
     },
   });
@@ -165,9 +161,7 @@ const Index = () => {
               <TabsTrigger value="technicalSummary">Technical Summary</TabsTrigger>
               <TabsTrigger value="prd">PRD</TabsTrigger>
               <TabsTrigger value="userTypes">User Types</TabsTrigger>
-              <TabsTrigger value="dataModels">Data Models</TabsTrigger>
               <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
-              <TabsTrigger value="tests">Tests</TabsTrigger>
             </TabsList>
             <TabsContent value="technicalSummary">
               <ArtifactPanel title="Technical Summary" content={artifacts.technicalSummary} />
@@ -178,14 +172,8 @@ const Index = () => {
             <TabsContent value="userTypes">
               <ArtifactPanel title="User Types" content={artifacts.userTypes} />
             </TabsContent>
-            <TabsContent value="dataModels">
-              <ArtifactPanel title="Data Models" content={artifacts.dataModels} />
-            </TabsContent>
             <TabsContent value="knowledgeGraph">
               <KnowledgeGraphComponent data={artifacts.knowledgeGraph} />
-            </TabsContent>
-            <TabsContent value="tests">
-              <ArtifactPanel title="Tests" content={artifacts.tests} />
             </TabsContent>
           </Tabs>
         </div>
