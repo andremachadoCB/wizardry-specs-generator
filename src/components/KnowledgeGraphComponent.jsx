@@ -25,7 +25,7 @@ const KnowledgeGraphComponent = ({ data }) => {
 
   const colorMap = {
     Program: '#FF6B6B',
-    File: '#4ECDC4',
+    File: '#CCCCCC',
     Procedure: '#45B7D1',
     Variable: '#FFA07A',
   };
