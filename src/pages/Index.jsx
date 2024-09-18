@@ -11,12 +11,60 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { fetchWithApiUrl } from '../utils/api';
+import ForceGraph2D from 'react-force-graph-2d';
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
   const [fileContent, setFileContent] = useState('');
+
+  const parseKnowledgeGraph = (graphData) => {
+    if (!graphData || !graphData.nodes || !graphData.links) {
+      return { nodes: [], links: [] };
+    }
+
+    const nodes = graphData.nodes.map(node => ({
+      id: node.id,
+      name: node.label,
+      type: node.type,
+      color: getNodeColor(node.type),
+    }));
+
+    const links = graphData.links.map(link => ({
+      source: link.source,
+      target: link.target,
+      label: link.label,
+    }));
+
+    return { nodes, links };
+  };
+
+  const getNodeColor = (type) => {
+    const colorMap = {
+      Program: '#FF6B6B',
+      File: '#4ECDC4',
+      Procedure: '#45B7D1',
+      Variable: '#FFA07A',
+    };
+    return colorMap[type] || '#CCCCCC';
+  };
+
+  const KnowledgeGraphComponent = ({ data }) => {
+    return (
+      <div style={{ width: '100%', height: '600px' }}>
+        <ForceGraph2D
+          graphData={data}
+          nodeLabel="name"
+          nodeColor={node => node.color}
+          linkLabel="label"
+          linkDirectionalArrowLength={3.5}
+          linkDirectionalArrowRelPos={1}
+          linkCurvature={0.25}
+        />
+      </div>
+    );
+  };
 
   const fileAnalysisMutation = useMutation({
     mutationFn: ({ url, file_path }) => fetchWithApiUrl('/api/repos/file/reason', {
@@ -32,7 +80,7 @@ const Index = () => {
         prd: JSON.stringify(data.analysis, null, 2),
         userTypes: data.user_types,
         dataModels: Object.keys(data.analysis),
-        knowledgeGraph: data.user_stories.split('\n'),
+        knowledgeGraph: parseKnowledgeGraph(data.graph),
         tests: ['Test 1', 'Test 2']
       });
     },
@@ -43,7 +91,7 @@ const Index = () => {
     prd: '',
     userTypes: [],
     dataModels: [],
-    knowledgeGraph: [],
+    knowledgeGraph: { nodes: [], links: [] },
     tests: []
   });
 
@@ -154,7 +202,7 @@ const Index = () => {
               <ArtifactPanel title="Data Models" content={artifacts.dataModels} />
             </TabsContent>
             <TabsContent value="knowledgeGraph">
-              <ArtifactPanel title="Knowledge Graph" content={artifacts.knowledgeGraph} />
+              <KnowledgeGraphComponent data={artifacts.knowledgeGraph} />
             </TabsContent>
             <TabsContent value="tests">
               <ArtifactPanel title="Tests" content={artifacts.tests} />
