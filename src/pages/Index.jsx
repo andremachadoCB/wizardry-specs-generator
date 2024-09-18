@@ -9,34 +9,39 @@ import { Loader2 } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 import { fetchWithApiUrl } from '../utils/api';
-import ForceGraph2D from 'react-force-graph-2d';
+import { ForceGraph2D } from 'react-force-graph';
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
   const [fileContent, setFileContent] = useState('');
+  const [artifacts, setArtifacts] = useState({
+    technicalSummary: '',
+    prd: '',
+    userTypes: [],
+    dataModels: [],
+    knowledgeGraph: { nodes: [], links: [] },
+    tests: []
+  });
 
   const parseKnowledgeGraph = (graphData) => {
     if (!graphData || !graphData.nodes || !graphData.links) {
       return { nodes: [], links: [] };
     }
-
     const nodes = graphData.nodes.map(node => ({
       id: node.id,
       name: node.label,
       type: node.type,
       color: getNodeColor(node.type),
     }));
-
     const links = graphData.links.map(link => ({
       source: link.source,
       target: link.target,
       label: link.label,
     }));
-
     return { nodes, links };
   };
 
@@ -50,21 +55,19 @@ const Index = () => {
     return colorMap[type] || '#CCCCCC';
   };
 
-  const KnowledgeGraphComponent = ({ data }) => {
-    return (
-      <div style={{ width: '100%', height: '600px' }}>
-        <ForceGraph2D
-          graphData={data}
-          nodeLabel="name"
-          nodeColor={node => node.color}
-          linkLabel="label"
-          linkDirectionalArrowLength={3.5}
-          linkDirectionalArrowRelPos={1}
-          linkCurvature={0.25}
-        />
-      </div>
-    );
-  };
+  const KnowledgeGraphComponent = ({ data }) => (
+    <div style={{ width: '100%', height: '600px' }}>
+      <ForceGraph2D
+        graphData={data}
+        nodeLabel="name"
+        nodeColor={node => node.color}
+        linkLabel="label"
+        linkDirectionalArrowLength={3.5}
+        linkDirectionalArrowRelPos={1}
+        linkCurvature={0.25}
+      />
+    </div>
+  );
 
   const fileAnalysisMutation = useMutation({
     mutationFn: ({ url, file_path }) => fetchWithApiUrl('/api/repos/file/reason', {
@@ -84,15 +87,6 @@ const Index = () => {
         tests: ['Test 1', 'Test 2']
       });
     },
-  });
-
-  const [artifacts, setArtifacts] = useState({
-    technicalSummary: '',
-    prd: '',
-    userTypes: [],
-    dataModels: [],
-    knowledgeGraph: { nodes: [], links: [] },
-    tests: []
   });
 
   const handleGenerateSpecs = async () => {
