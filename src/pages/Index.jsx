@@ -36,7 +36,7 @@ const Index = () => {
     onSuccess: (data) => {
       setArtifacts({
         technicalSummary: data.file_summary,
-        prd: JSON.stringify(data.analysis, null, 2),
+        prd: JSON.stringify(data.categories, null, 2),
         userTypes: data.user_types,
         knowledgeGraph: data.graph,
         dataModels: data.data_models || { entities: [], relationships: [] },
