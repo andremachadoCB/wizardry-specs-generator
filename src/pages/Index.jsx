@@ -18,11 +18,14 @@ const Index = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
   const [fileContent, setFileContent] = useState('');
+  const [showAdvancedTabs, setShowAdvancedTabs] = useState(false);
   const [artifacts, setArtifacts] = useState({
     technicalSummary: '',
     prd: '',
     userTypes: [],
     knowledgeGraph: { nodes: [], links: [] },
+    dataModels: '',
+    tests: '',
   });
 
   const parseKnowledgeGraph = (graphData) => {
@@ -67,6 +70,8 @@ const Index = () => {
         prd: JSON.stringify(data.analysis, null, 2),
         userTypes: data.user_types,
         knowledgeGraph: parseKnowledgeGraph(data.graph),
+        dataModels: data.data_models || '',
+        tests: data.tests || '',
       });
     },
   });
@@ -162,6 +167,8 @@ const Index = () => {
               <TabsTrigger value="prd">PRD</TabsTrigger>
               <TabsTrigger value="userTypes">User Types</TabsTrigger>
               <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
+              {showAdvancedTabs && <TabsTrigger value="dataModels">Data Models</TabsTrigger>}
+              {showAdvancedTabs && <TabsTrigger value="tests">Tests</TabsTrigger>}
             </TabsList>
             <TabsContent value="technicalSummary">
               <ArtifactPanel title="Technical Summary" content={artifacts.technicalSummary} />
@@ -175,6 +182,16 @@ const Index = () => {
             <TabsContent value="knowledgeGraph">
               <KnowledgeGraphComponent data={artifacts.knowledgeGraph} />
             </TabsContent>
+            {showAdvancedTabs && (
+              <TabsContent value="dataModels">
+                <ArtifactPanel title="Data Models" content={artifacts.dataModels} />
+              </TabsContent>
+            )}
+            {showAdvancedTabs && (
+              <TabsContent value="tests">
+                <ArtifactPanel title="Tests" content={artifacts.tests} />
+              </TabsContent>
+            )}
           </Tabs>
         </div>
       </div>
