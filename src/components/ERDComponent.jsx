@@ -1,66 +1,102 @@
-import React from 'react';
-import { ForceGraph2D } from 'react-force-graph';
+import React, { useEffect, useRef } from 'react';
 
 const ERDComponent = ({ data }) => {
-  const graphData = React.useMemo(() => {
-    const nodes = [];
-    const links = [];
+  const svgRef = useRef(null);
 
-    // Create nodes for entities
-    data.entities.forEach(entity => {
-      nodes.push({
-        id: entity.name,
-        name: entity.name,
-        attributes: entity.attributes.join('\n'),
+  useEffect(() => {
+    if (!data || !data.entities || !data.relationships) return;
+
+    const svg = svgRef.current;
+    const width = 800;
+    const height = 600;
+    svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+    // Clear previous content
+    while (svg.firstChild) {
+      svg.removeChild(svg.firstChild);
+    }
+
+    const entityWidth = 200;
+    const entityHeight = 30;
+    const entityPadding = 10;
+
+    // Draw entities
+    data.entities.forEach((entity, index) => {
+      const x = 50 + (index % 3) * (entityWidth + 50);
+      const y = 50 + Math.floor(index / 3) * (entityHeight * 5);
+
+      // Entity rectangle
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', x);
+      rect.setAttribute('y', y);
+      rect.setAttribute('width', entityWidth);
+      rect.setAttribute('height', entityHeight * (entity.attributes.length + 1));
+      rect.setAttribute('fill', '#f0f0f0');
+      rect.setAttribute('stroke', '#000');
+      svg.appendChild(rect);
+
+      // Entity name
+      const nameText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      nameText.setAttribute('x', x + entityWidth / 2);
+      nameText.setAttribute('y', y + entityHeight / 2);
+      nameText.setAttribute('text-anchor', 'middle');
+      nameText.setAttribute('dominant-baseline', 'middle');
+      nameText.setAttribute('font-weight', 'bold');
+      nameText.textContent = entity.name;
+      svg.appendChild(nameText);
+
+      // Entity attributes
+      entity.attributes.forEach((attr, attrIndex) => {
+        const attrText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        attrText.setAttribute('x', x + entityPadding);
+        attrText.setAttribute('y', y + entityHeight * (attrIndex + 1.5));
+        attrText.setAttribute('dominant-baseline', 'middle');
+        attrText.textContent = attr;
+        svg.appendChild(attrText);
       });
     });
 
-    // Create links for relationships
+    // Draw relationships
     data.relationships.forEach(rel => {
-      links.push({
-        source: rel.from,
-        target: rel.to,
-        label: `${rel.type} (${rel.cardinality})${rel.optional ? ' (optional)' : ''}`,
-      });
-    });
+      const fromEntity = data.entities.find(e => e.name === rel.from);
+      const toEntity = data.entities.find(e => e.name === rel.to);
 
-    return { nodes, links };
+      if (!fromEntity || !toEntity) return;
+
+      const fromIndex = data.entities.indexOf(fromEntity);
+      const toIndex = data.entities.indexOf(toEntity);
+
+      const fromX = 50 + (fromIndex % 3) * (entityWidth + 50) + entityWidth;
+      const fromY = 50 + Math.floor(fromIndex / 3) * (entityHeight * 5) + entityHeight / 2;
+
+      const toX = 50 + (toIndex % 3) * (entityWidth + 50);
+      const toY = 50 + Math.floor(toIndex / 3) * (entityHeight * 5) + entityHeight / 2;
+
+      // Draw line
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', fromX);
+      line.setAttribute('y1', fromY);
+      line.setAttribute('x2', toX);
+      line.setAttribute('y2', toY);
+      line.setAttribute('stroke', '#000');
+      svg.appendChild(line);
+
+      // Draw relationship type and cardinality
+      const midX = (fromX + toX) / 2;
+      const midY = (fromY + toY) / 2;
+      const relText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      relText.setAttribute('x', midX);
+      relText.setAttribute('y', midY);
+      relText.setAttribute('text-anchor', 'middle');
+      relText.setAttribute('dominant-baseline', 'middle');
+      relText.textContent = `${rel.type} (${rel.cardinality})`;
+      svg.appendChild(relText);
+    });
   }, [data]);
 
-  const nodeCanvasObject = React.useCallback((node, ctx, globalScale) => {
-    const fontSize = 12 / globalScale;
-    ctx.font = `${fontSize}px Sans-Serif`;
-    
-    // Draw entity name
-    ctx.fillStyle = 'black';
-    ctx.textAlign = 'center';
-    ctx.fillText(node.name, node.x, node.y);
-
-    // Draw attributes
-    const lines = node.attributes.split('\n');
-    lines.forEach((line, index) => {
-      ctx.fillText(line, node.x, node.y + fontSize * (index + 1.5));
-    });
-
-    // Draw node circle
-    ctx.beginPath();
-    ctx.arc(node.x, node.y, 5, 0, 2 * Math.PI, false);
-    ctx.fillStyle = '#4CAF50';
-    ctx.fill();
-  }, []);
-
   return (
-    <div style={{ width: '100%', height: '600px' }}>
-      <ForceGraph2D
-        graphData={graphData}
-        nodeCanvasObject={nodeCanvasObject}
-        nodeCanvasObjectMode={() => 'replace'}
-        linkLabel="label"
-        linkColor={() => '#757575'}
-        linkDirectionalArrowLength={3.5}
-        linkDirectionalArrowRelPos={1}
-        linkCurvature={0.25}
-      />
+    <div className="w-full h-[600px] overflow-auto">
+      <svg ref={svgRef} width="100%" height="100%"></svg>
     </div>
   );
 };
