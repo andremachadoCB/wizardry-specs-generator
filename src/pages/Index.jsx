@@ -12,19 +12,19 @@ import { Separator } from "@/components/ui/separator";
 import { useMutation } from "@tanstack/react-query";
 import { fetchWithApiUrl } from '../utils/api';
 import KnowledgeGraphComponent from '../components/KnowledgeGraphComponent';
+import ERDComponent from '../components/ERDComponent';
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
   const [fileContent, setFileContent] = useState('');
-  const [showAdvancedTabs, setShowAdvancedTabs] = useState(false);
   const [artifacts, setArtifacts] = useState({
     technicalSummary: '',
     prd: '',
     userTypes: [],
     knowledgeGraph: { nodes: [], links: [] },
-    dataModels: '',
+    dataModels: { entities: [], relationships: [] },
     tests: '',
   });
 
@@ -49,7 +49,7 @@ const Index = () => {
   const getNodeColor = (type) => {
     const colorMap = {
       Program: '#FF6B6B',
-      File: '#4ECDC4',
+      File: '#CCCCCC',
       Procedure: '#45B7D1',
       Variable: '#FFA07A',
     };
@@ -70,7 +70,7 @@ const Index = () => {
         prd: JSON.stringify(data.analysis, null, 2),
         userTypes: data.user_types,
         knowledgeGraph: parseKnowledgeGraph(data.graph),
-        dataModels: data.data_models || '',
+        dataModels: data.data_models || { entities: [], relationships: [] },
         tests: data.tests || '',
       });
     },
@@ -167,8 +167,8 @@ const Index = () => {
               <TabsTrigger value="prd">PRD</TabsTrigger>
               <TabsTrigger value="userTypes">User Types</TabsTrigger>
               <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
-              {showAdvancedTabs && <TabsTrigger value="dataModels">Data Models</TabsTrigger>}
-              {showAdvancedTabs && <TabsTrigger value="tests">Tests</TabsTrigger>}
+              <TabsTrigger value="dataModels">Data Models</TabsTrigger>
+              <TabsTrigger value="tests">Tests</TabsTrigger>
             </TabsList>
             <TabsContent value="technicalSummary">
               <ArtifactPanel title="Technical Summary" content={artifacts.technicalSummary} />
@@ -182,16 +182,12 @@ const Index = () => {
             <TabsContent value="knowledgeGraph">
               <KnowledgeGraphComponent data={artifacts.knowledgeGraph} />
             </TabsContent>
-            {showAdvancedTabs && (
-              <TabsContent value="dataModels">
-                <ArtifactPanel title="Data Models" content={artifacts.dataModels} />
-              </TabsContent>
-            )}
-            {showAdvancedTabs && (
-              <TabsContent value="tests">
-                <ArtifactPanel title="Tests" content={artifacts.tests} />
-              </TabsContent>
-            )}
+            <TabsContent value="dataModels">
+              <ERDComponent data={artifacts.dataModels} />
+            </TabsContent>
+            <TabsContent value="tests">
+              <ArtifactPanel title="Tests" content={artifacts.tests} />
+            </TabsContent>
           </Tabs>
         </div>
       </div>
