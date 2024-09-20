@@ -25,7 +25,6 @@ const Index = () => {
     userTypes: [],
     knowledgeGraph: { nodes: [], links: [] },
     dataModels: { entities: [], relationships: [] },
-    tests: '',
   });
 
   const parseKnowledgeGraph = (graphData) => {
@@ -71,7 +70,6 @@ const Index = () => {
         userTypes: data.user_types,
         knowledgeGraph: parseKnowledgeGraph(data.graph),
         dataModels: data.data_models || { entities: [], relationships: [] },
-        tests: data.tests || '',
       });
     },
   });
@@ -168,7 +166,6 @@ const Index = () => {
               <TabsTrigger value="userTypes">User Types</TabsTrigger>
               <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
               <TabsTrigger value="dataModels">Data Models</TabsTrigger>
-              <TabsTrigger value="tests">Tests</TabsTrigger>
             </TabsList>
             <TabsContent value="technicalSummary">
               <ArtifactPanel title="Technical Summary" content={artifacts.technicalSummary} />
@@ -184,9 +181,6 @@ const Index = () => {
             </TabsContent>
             <TabsContent value="dataModels">
               <ERDComponent data={artifacts.dataModels} />
-            </TabsContent>
-            <TabsContent value="tests">
-              <ArtifactPanel title="Tests" content={artifacts.tests} />
             </TabsContent>
           </Tabs>
         </div>
