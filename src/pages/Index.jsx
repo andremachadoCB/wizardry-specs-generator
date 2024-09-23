@@ -5,7 +5,6 @@ import { Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { fetchWithApiUrl } from '../utils/api';
 import RepoSelector from '../components/RepoSelector';
-import SettingsPanel from '../components/SettingsPanel';
 import FileExplorer from '../components/FileExplorer';
 import ArtifactTabs from '../components/ArtifactTabs';
 import Navbar from '../components/Navbar';
@@ -14,7 +13,6 @@ const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [artifacts, setArtifacts] = useState({
     technicalSummary: '',
     prd: '',
@@ -66,8 +64,6 @@ const Index = () => {
       <Navbar />
       <div className="p-4 bg-white w-full">
         <RepoSelector selectedRepo={selectedRepo} onSelectRepo={setSelectedRepo} />
-        <Separator className="my-4" />
-        <SettingsPanel selectedLanguage={selectedLanguage} setSelectedLanguage={setSelectedLanguage} />
       </div>
       <Separator className="my-4" />
       <div className="flex flex-1 overflow-hidden">
