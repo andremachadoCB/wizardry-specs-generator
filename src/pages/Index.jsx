@@ -1,25 +1,19 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Navbar from '../components/Navbar';
-import { Loader2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { fetchWithApiUrl } from '../utils/api';
-import { languageOptions } from '../utils/languageOptions';
 import RepoSelector from '../components/RepoSelector';
 import SettingsPanel from '../components/SettingsPanel';
 import FileExplorer from '../components/FileExplorer';
 import ArtifactTabs from '../components/ArtifactTabs';
+import Navbar from '../components/Navbar';
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [artifacts, setArtifacts] = useState({
     technicalSummary: '',
     prd: '',
@@ -29,12 +23,12 @@ const Index = () => {
   });
 
   const fileAnalysisMutation = useMutation({
-    mutationFn: ({ url, file_path, language }) => fetchWithApiUrl('/api/repos/file/reason', {
+    mutationFn: ({ url, file_path }) => fetchWithApiUrl('/api/repos/file/reason', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ url, file_path, language }),
+      body: JSON.stringify({ url, file_path }),
     }),
     onSuccess: (data) => {
       setArtifacts({
@@ -53,7 +47,6 @@ const Index = () => {
         await fileAnalysisMutation.mutateAsync({ 
           url: selectedRepo, 
           file_path: selectedFile,
-          language: selectedLanguage
         });
       } catch (error) {
         console.error('Error generating specs:', error);
@@ -73,10 +66,7 @@ const Index = () => {
       <div className="p-4 bg-white w-full">
         <RepoSelector selectedRepo={selectedRepo} onSelectRepo={setSelectedRepo} />
         <Separator className="my-4" />
-        <SettingsPanel
-          selectedLanguage={selectedLanguage}
-          setSelectedLanguage={setSelectedLanguage}
-        />
+        <SettingsPanel />
       </div>
       <Separator className="my-4" />
       <div className="flex flex-1 overflow-hidden">
