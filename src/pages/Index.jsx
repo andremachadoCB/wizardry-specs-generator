@@ -69,10 +69,8 @@ const Index = () => {
     <div className="bg-crowdbotics-background text-crowdbotics-text min-h-screen flex flex-col">
       <Navbar />
       <div className="p-4 bg-white w-full">
-        <div className="flex justify-between items-start gap-4">
-          <div className="flex-grow">
-            <RepoSelector selectedRepo={selectedRepo} onSelectRepo={setSelectedRepo} />
-          </div>
+        <div className="flex flex-col gap-4">
+          <RepoSelector selectedRepo={selectedRepo} onSelectRepo={setSelectedRepo} />
           <SettingsPanel
             selectedLanguage={selectedLanguage}
             onLanguageChange={handleLanguageChange}
@@ -90,7 +88,7 @@ const Index = () => {
         />
         <Separator orientation="vertical" className="mx-4" />
         <div className="w-4/5 p-4 overflow-auto">
-          <div className="mb-4 sticky top-0 bg-white z-10 p-4 shadow-md w-full">
+          <div className="mb-4 sticky top-0 bg-white z-10 p-4 shadow-md">
             <Button 
               className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase w-full"
               onClick={handleGenerateSpecs}
