@@ -152,18 +152,21 @@ const Index = () => {
           <FilePreview content={fileContent} />
           <div className="mb-4 sticky top-0 bg-white z-10 p-4 shadow-md">
             <div className="flex items-center space-x-4 mb-4">
-              <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select Language" />
-                </SelectTrigger>
-                <SelectContent>
-                  {languageOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex flex-col">
+                <Label htmlFor="output-language" className="mb-1">Output Language</Label>
+                <Select id="output-language" value={selectedLanguage} onValueChange={setSelectedLanguage}>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Select Language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {languageOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <Button 
                 className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase flex-grow"
                 onClick={handleGenerateSpecs}
