@@ -9,16 +9,19 @@ import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMutation } from "@tanstack/react-query";
 import { fetchWithApiUrl } from '../utils/api';
 import KnowledgeGraphComponent from '../components/KnowledgeGraphComponent';
 import ERDComponent from '../components/ERDComponent';
+import { languageOptions } from '../utils/languageOptions';
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
   const [fileContent, setFileContent] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [artifacts, setArtifacts] = useState({
     technicalSummary: '',
     prd: '',
@@ -56,12 +59,12 @@ const Index = () => {
   };
 
   const fileAnalysisMutation = useMutation({
-    mutationFn: ({ url, file_path }) => fetchWithApiUrl('/api/repos/file/reason', {
+    mutationFn: ({ url, file_path, language }) => fetchWithApiUrl('/api/repos/file/reason', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ url, file_path }),
+      body: JSON.stringify({ url, file_path, language }),
     }),
     onSuccess: (data) => {
       setArtifacts({
@@ -77,7 +80,11 @@ const Index = () => {
   const handleGenerateSpecs = async () => {
     if (selectedFile) {
       try {
-        await fileAnalysisMutation.mutateAsync({ url: selectedRepo, file_path: selectedFile });
+        await fileAnalysisMutation.mutateAsync({ 
+          url: selectedRepo, 
+          file_path: selectedFile,
+          language: selectedLanguage
+        });
       } catch (error) {
         console.error('Error generating specs:', error);
       }
@@ -144,20 +151,34 @@ const Index = () => {
         <div className="w-4/5 p-4 overflow-auto">
           <FilePreview content={fileContent} />
           <div className="mb-4 sticky top-0 bg-white z-10 p-4 shadow-md">
-            <Button 
-              className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase w-full"
-              onClick={handleGenerateSpecs}
-              disabled={isGenerateDisabled}
-            >
-              {fileAnalysisMutation.isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                'GENERATE SPECS'
-              )}
-            </Button>
+            <div className="flex items-center space-x-4 mb-4">
+              <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select Language" />
+                </SelectTrigger>
+                <SelectContent>
+                  {languageOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button 
+                className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase flex-grow"
+                onClick={handleGenerateSpecs}
+                disabled={isGenerateDisabled}
+              >
+                {fileAnalysisMutation.isPending ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  'GENERATE SPECS'
+                )}
+              </Button>
+            </div>
           </div>
           <Tabs defaultValue="technicalSummary" className="bg-white rounded-lg p-4">
             <TabsList>
