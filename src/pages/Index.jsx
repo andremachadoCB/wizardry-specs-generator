@@ -9,12 +9,14 @@ import FileExplorer from '../components/FileExplorer';
 import ArtifactTabs from '../components/ArtifactTabs';
 import Navbar from '../components/Navbar';
 import SettingsPanel from '../components/SettingsPanel';
+import FilePreview from '../components/FilePreview';
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const [fileContent, setFileContent] = useState('');
   const [artifacts, setArtifacts] = useState({
     technicalSummary: '',
     prd: '',
@@ -39,6 +41,7 @@ const Index = () => {
         knowledgeGraph: data.graph,
         dataModels: data.data_models || { entities: [], relationships: [] },
       });
+      setFileContent(data.file_content || '');
     },
   });
 
@@ -71,6 +74,7 @@ const Index = () => {
       <div className="p-4 bg-white w-full">
         <div className="flex flex-col gap-4">
           <RepoSelector selectedRepo={selectedRepo} onSelectRepo={setSelectedRepo} />
+          <div className="font-bold">Output Language:</div>
           <SettingsPanel
             selectedLanguage={selectedLanguage}
             onLanguageChange={handleLanguageChange}
@@ -87,7 +91,7 @@ const Index = () => {
           selectedFile={selectedFile}
         />
         <Separator orientation="vertical" className="mx-4" />
-        <div className="w-4/5 p-4 overflow-auto">
+        <div className="w-4/5 p-4 overflow-auto flex flex-col">
           <div className="mb-4 sticky top-0 bg-white z-10 p-4 shadow-md">
             <Button 
               className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase w-full"
@@ -104,7 +108,10 @@ const Index = () => {
               )}
             </Button>
           </div>
-          <ArtifactTabs artifacts={artifacts} />
+          <div className="flex-1 overflow-hidden flex flex-col">
+            <FilePreview content={fileContent} />
+            <ArtifactTabs artifacts={artifacts} />
+          </div>
         </div>
       </div>
     </div>
