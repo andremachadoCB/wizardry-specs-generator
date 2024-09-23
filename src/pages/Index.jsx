@@ -14,6 +14,7 @@ const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [artifacts, setArtifacts] = useState({
     technicalSummary: '',
     prd: '',
@@ -66,7 +67,7 @@ const Index = () => {
       <div className="p-4 bg-white w-full">
         <RepoSelector selectedRepo={selectedRepo} onSelectRepo={setSelectedRepo} />
         <Separator className="my-4" />
-        <SettingsPanel />
+        <SettingsPanel selectedLanguage={selectedLanguage} setSelectedLanguage={setSelectedLanguage} />
       </div>
       <Separator className="my-4" />
       <div className="flex flex-1 overflow-hidden">
