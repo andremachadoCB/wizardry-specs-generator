@@ -9,9 +9,10 @@ const RepoSelector = ({ selectedRepo, onSelectRepo }) => {
       <Input
         id="repo-url"
         type="text"
-        placeholder="https://github.com/aws-samples/aws-mainframe-modernization-carddemo"
+        placeholder="https://github.com/username/repo"
         value={selectedRepo}
         onChange={(e) => onSelectRepo(e.target.value)}
+        className="w-full"
       />
     </div>
   );
