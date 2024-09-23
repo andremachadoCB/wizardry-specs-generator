@@ -8,11 +8,13 @@ import RepoSelector from '../components/RepoSelector';
 import FileExplorer from '../components/FileExplorer';
 import ArtifactTabs from '../components/ArtifactTabs';
 import Navbar from '../components/Navbar';
+import SettingsPanel from '../components/SettingsPanel';
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('en');
   const [artifacts, setArtifacts] = useState({
     technicalSummary: '',
     prd: '',
@@ -57,6 +59,10 @@ const Index = () => {
     setShouldLoadFiles(true);
   };
 
+  const handleLanguageChange = (value) => {
+    setSelectedLanguage(value);
+  };
+
   const isGenerateDisabled = !selectedRepo || !selectedFile || fileAnalysisMutation.isPending;
 
   return (
@@ -92,7 +98,17 @@ const Index = () => {
               )}
             </Button>
           </div>
-          <ArtifactTabs artifacts={artifacts} />
+          <div className="grid grid-cols-3 gap-4">
+            <div className="col-span-2">
+              <ArtifactTabs artifacts={artifacts} />
+            </div>
+            <div className="col-span-1">
+              <SettingsPanel
+                selectedLanguage={selectedLanguage}
+                onLanguageChange={handleLanguageChange}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
