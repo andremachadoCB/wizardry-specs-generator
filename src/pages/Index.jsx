@@ -14,7 +14,7 @@ const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('en');
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [artifacts, setArtifacts] = useState({
     technicalSummary: '',
     prd: '',
@@ -69,7 +69,15 @@ const Index = () => {
     <div className="bg-crowdbotics-background text-crowdbotics-text min-h-screen flex flex-col">
       <Navbar />
       <div className="p-4 bg-white w-full">
-        <RepoSelector selectedRepo={selectedRepo} onSelectRepo={setSelectedRepo} />
+        <div className="flex justify-between items-start gap-4">
+          <div className="flex-grow">
+            <RepoSelector selectedRepo={selectedRepo} onSelectRepo={setSelectedRepo} />
+          </div>
+          <SettingsPanel
+            selectedLanguage={selectedLanguage}
+            onLanguageChange={handleLanguageChange}
+          />
+        </div>
       </div>
       <Separator className="my-4" />
       <div className="flex flex-1 overflow-hidden">
@@ -82,9 +90,9 @@ const Index = () => {
         />
         <Separator orientation="vertical" className="mx-4" />
         <div className="w-4/5 p-4 overflow-auto">
-          <div className="mb-4 sticky top-0 bg-white z-10 p-4 shadow-md">
+          <div className="mb-4 sticky top-0 bg-white z-10 p-4 shadow-md w-full">
             <Button 
-              className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase flex-grow"
+              className="bg-crowdbotics-button text-crowdbotics-text hover:bg-crowdbotics-button/90 rounded-none uppercase w-full"
               onClick={handleGenerateSpecs}
               disabled={isGenerateDisabled}
             >
@@ -98,17 +106,7 @@ const Index = () => {
               )}
             </Button>
           </div>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="col-span-2">
-              <ArtifactTabs artifacts={artifacts} />
-            </div>
-            <div className="col-span-1">
-              <SettingsPanel
-                selectedLanguage={selectedLanguage}
-                onLanguageChange={handleLanguageChange}
-              />
-            </div>
-          </div>
+          <ArtifactTabs artifacts={artifacts} />
         </div>
       </div>
     </div>

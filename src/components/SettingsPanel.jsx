@@ -4,27 +4,22 @@ import { languageOptions } from '../utils/languageOptions';
 
 const SettingsPanel = ({ selectedLanguage, onLanguageChange }) => {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md">
-      <h2 className="text-lg font-semibold mb-4">Settings</h2>
-      <div className="space-y-4">
-        <div>
-          <label htmlFor="language-select" className="block text-sm font-medium text-gray-700 mb-1">
-            Language
-          </label>
-          <Select value={selectedLanguage} onValueChange={onLanguageChange}>
-            <SelectTrigger id="language-select">
-              <SelectValue placeholder="Select a language" />
-            </SelectTrigger>
-            <SelectContent>
-              {languageOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+    <div className="flex items-center">
+      <label htmlFor="language-select" className="mr-2 text-sm font-medium text-gray-700">
+        Language:
+      </label>
+      <Select value={selectedLanguage} onValueChange={onLanguageChange}>
+        <SelectTrigger id="language-select" className="w-[180px]">
+          <SelectValue placeholder="Select a language" />
+        </SelectTrigger>
+        <SelectContent>
+          {languageOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 };
