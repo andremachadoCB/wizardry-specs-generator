@@ -3,26 +3,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ArtifactPanel from './ArtifactPanel';
 import KnowledgeGraphComponent from './KnowledgeGraphComponent';
 import ERDComponent from './ERDComponent';
-import TreeView from './TreeView';
-import FeatureDetail from './FeatureDetail';
+import PRDTreeView from './PRDTreeView';
+import PRDFeatureDetail from './PRDFeatureDetail';
 
-const ArtifactTabs = ({ artifacts, onUpdatePRD }) => {
+const ArtifactTabs = ({ artifacts }) => {
   const [selectedFeature, setSelectedFeature] = useState(null);
 
   const handleFeatureSelect = (feature) => {
     setSelectedFeature(feature);
-  };
-
-  const handleFeatureUpdate = (updatedFeature) => {
-    const updatedPRD = { ...artifacts.prd };
-    Object.keys(updatedPRD).forEach(category => {
-      const featureIndex = updatedPRD[category].findIndex(f => f.name === updatedFeature.name);
-      if (featureIndex !== -1) {
-        updatedPRD[category][featureIndex] = updatedFeature;
-      }
-    });
-    onUpdatePRD(updatedPRD);
-    setSelectedFeature(updatedFeature);
   };
 
   return (
@@ -40,17 +28,14 @@ const ArtifactTabs = ({ artifacts, onUpdatePRD }) => {
       <TabsContent value="prd">
         <div className="flex">
           <div className="w-1/2 pr-2">
-            <TreeView 
+            <PRDTreeView 
               data={artifacts.prd} 
               onSelect={handleFeatureSelect}
               selectedFeature={selectedFeature}
             />
           </div>
           <div className="w-1/2 pl-2">
-            <FeatureDetail 
-              feature={selectedFeature}
-              onUpdate={handleFeatureUpdate}
-            />
+            <PRDFeatureDetail feature={selectedFeature} />
           </div>
         </div>
       </TabsContent>
