@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import logoPlaceholder from '../assets/logo-placeholder.png';
+import logoPlaceholder from '../assets/logo.png';
 
 const Navbar = () => {
   return (
