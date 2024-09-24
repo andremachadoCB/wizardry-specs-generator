@@ -24,7 +24,7 @@ const TreeNode = ({ node, onSelect, selectedFeature }) => {
         )}
         <span>{node.name}</span>
       </div>
-      {isOpen && node.type === 'category' && node.features && (
+      {isOpen && node.type === 'category' && Array.isArray(node.features) && (
         <div className="ml-4">
           {node.features.map((feature) => (
             <TreeNode 
