@@ -19,7 +19,7 @@ const Index = () => {
   const [fileContent, setFileContent] = useState('');
   const [artifacts, setArtifacts] = useState({
     technicalSummary: '',
-    prd: '',
+    prd: {},
     userTypes: [],
     knowledgeGraph: { nodes: [], links: [] },
     dataModels: { entities: [], relationships: [] },
@@ -54,7 +54,7 @@ const Index = () => {
     onSuccess: (data) => {
       setArtifacts({
         technicalSummary: data.file_summary,
-        prd: JSON.stringify(data.categories, null, 2),
+        prd: data.categories,
         userTypes: data.user_types,
         knowledgeGraph: parseKnowledgeGraph(data.graph),
         dataModels: data.data_models || { entities: [], relationships: [] },
@@ -112,6 +112,13 @@ const Index = () => {
     setSelectedLanguage(value);
   };
 
+  const handleUpdatePRD = (updatedPRD) => {
+    setArtifacts(prevArtifacts => ({
+      ...prevArtifacts,
+      prd: updatedPRD,
+    }));
+  };
+
   const isGenerateDisabled = !selectedRepo || !selectedFile || fileAnalysisMutation.isPending;
 
   return (
@@ -156,7 +163,7 @@ const Index = () => {
             </Button>
           </div>
           <div className="flex-1 overflow-hidden flex flex-col">
-            <ArtifactTabs artifacts={artifacts} />
+            <ArtifactTabs artifacts={artifacts} onUpdatePRD={handleUpdatePRD} />
           </div>
         </div>
       </div>
