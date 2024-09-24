@@ -59,7 +59,7 @@ const Index = () => {
         knowledgeGraph: parseKnowledgeGraph(data.graph),
         dataModels: data.data_models || { entities: [], relationships: [] },
       });
-      setFileContent(data.file_content || '');
+      setFileContent(fileContent || '');
     },
   });
 
