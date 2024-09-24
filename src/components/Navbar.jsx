@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
+import logoPlaceholder from '../assets/logo-placeholder.png';
 
 const Navbar = () => {
   return (
@@ -8,8 +9,8 @@ const Navbar = () => {
         <div className="flex items-center">
           <a href="https://crowdbotics.com/" target="_blank" rel="noopener noreferrer">
             <img 
-              src="https://dk381fmjr1u8j.cloudfront.net/5b938dccd8a660445295553bd59bdd67a4706885/img/cb-logo-new-black.svg" 
-              alt="Crowdbotics Logo" 
+              src={logoPlaceholder}
+              alt="Logo" 
               className="h-8 mr-4"
             />
           </a>

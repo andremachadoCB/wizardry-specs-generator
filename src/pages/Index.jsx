@@ -54,8 +54,8 @@ const Index = () => {
     onSuccess: (data) => {
       setArtifacts({
         technicalSummary: data.file_summary,
-        prd: data.categories,
-        userTypes: data.user_types,
+        prd: data.categories || {},
+        userTypes: data.user_types || [],
         knowledgeGraph: parseKnowledgeGraph(data.graph),
         dataModels: data.data_models || { entities: [], relationships: [] },
       });
