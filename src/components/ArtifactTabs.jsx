@@ -14,7 +14,6 @@ const ArtifactTabs = ({ artifacts }) => {
   };
 
   const handleFeatureUpdate = (updatedFeature) => {
-    // Here you would typically update the state or call an API to update the feature
     console.log('Feature updated:', updatedFeature);
   };
 
@@ -32,14 +31,14 @@ const ArtifactTabs = ({ artifacts }) => {
       </TabsContent>
       <TabsContent value="prd">
         <div className="flex">
-          <div className="w-2/3 pr-2">
+          <div className="w-2/5 pr-2">
             <PRDTreeView 
               data={artifacts.prd} 
               onSelect={handleFeatureSelect}
               selectedFeature={selectedFeature}
             />
           </div>
-          <div className="w-1/3 pl-2">
+          <div className="w-3/5 pl-2">
             <PRDFeatureDetail 
               feature={selectedFeature} 
               onUpdate={handleFeatureUpdate}
