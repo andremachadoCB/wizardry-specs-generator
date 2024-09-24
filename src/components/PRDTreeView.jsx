@@ -43,6 +43,7 @@ const TreeNode = ({ node, onSelect, selectedFeature }) => {
 const PRDTreeView = ({ data, onSelect, selectedFeature }) => {
   return (
     <div className="bg-white rounded-lg p-4 h-[calc(100vh-200px)] overflow-auto">
+      <h2 className="text-2xl font-bold mb-4">Product Requirement Document</h2>
       {data.map((category) => (
         <TreeNode
           key={category.category_name}

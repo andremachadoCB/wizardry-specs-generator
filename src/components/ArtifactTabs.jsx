@@ -13,6 +13,11 @@ const ArtifactTabs = ({ artifacts }) => {
     setSelectedFeature(feature);
   };
 
+  const handleFeatureUpdate = (updatedFeature) => {
+    // Here you would typically update the state or call an API to update the feature
+    console.log('Feature updated:', updatedFeature);
+  };
+
   return (
     <Tabs defaultValue="technicalSummary" className="bg-white rounded-lg p-4">
       <TabsList>
@@ -27,15 +32,18 @@ const ArtifactTabs = ({ artifacts }) => {
       </TabsContent>
       <TabsContent value="prd">
         <div className="flex">
-          <div className="w-1/2 pr-2">
+          <div className="w-2/3 pr-2">
             <PRDTreeView 
               data={artifacts.prd} 
               onSelect={handleFeatureSelect}
               selectedFeature={selectedFeature}
             />
           </div>
-          <div className="w-1/2 pl-2">
-            <PRDFeatureDetail feature={selectedFeature} />
+          <div className="w-1/3 pl-2">
+            <PRDFeatureDetail 
+              feature={selectedFeature} 
+              onUpdate={handleFeatureUpdate}
+            />
           </div>
         </div>
       </TabsContent>
