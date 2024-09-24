@@ -194,7 +194,7 @@ const Index = () => {
             "feature_name": "9000-ACCTFILE-CLOSE",
             "description": "The 9000-ACCTFILE-CLOSE feature is responsible for closing the account file (ACCTFILE-FILE) in the CBACT01C program. This routine ensures that the file is properly closed after all read operations are completed. It also checks the file status to confirm that the file has been closed successfully and handles any errors that may occur during the closing process.",
             "acceptance_criteria": [
-              "AC1: The routine must close the ACCTFILE-FILE after all read operations are completed.",
+              "AC1: The routine must close the ACCTFILE-FILE after all read operations have been completed.",
               "AC2: The routine must check the file status after attempting to close the file.",
               "AC3: If the file is closed successfully, the routine should proceed without any errors.",
               "AC4: If there is an error while closing the file, the routine must handle the error appropriately and display the I/O status.",

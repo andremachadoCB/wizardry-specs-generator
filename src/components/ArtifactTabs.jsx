@@ -6,7 +6,7 @@ import ERDComponent from './ERDComponent';
 import PRDTreeView from './PRDTreeView';
 import PRDFeatureDetail from './PRDFeatureDetail';
 
-const ArtifactTabs = ({ artifacts }) => {
+const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
   const [selectedFeature, setSelectedFeature] = useState(null);
 
   const handleFeatureSelect = (feature) => {
@@ -14,8 +14,8 @@ const ArtifactTabs = ({ artifacts }) => {
   };
 
   const handleFeatureUpdate = (updatedFeature) => {
-    // TODO: Implement the logic to update the feature in the artifacts state
-    console.log('Feature updated:', updatedFeature);
+    onFeatureUpdate(updatedFeature);
+    setSelectedFeature(updatedFeature);
   };
 
   return (
