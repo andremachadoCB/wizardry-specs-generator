@@ -14,6 +14,7 @@ const ArtifactTabs = ({ artifacts }) => {
   };
 
   const handleFeatureUpdate = (updatedFeature) => {
+    // TODO: Implement the logic to update the feature in the artifacts state
     console.log('Feature updated:', updatedFeature);
   };
 
