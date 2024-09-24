@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -7,7 +7,19 @@ import { Button } from "@/components/ui/button";
 const PRDFeatureDetail = ({ feature, onUpdate }) => {
   const [editedFeature, setEditedFeature] = useState(feature);
 
-  if (!feature) return null;
+  useEffect(() => {
+    setEditedFeature(feature);
+  }, [feature]);
+
+  if (!feature) {
+    return (
+      <Card className="h-[calc(100vh-200px)] overflow-auto">
+        <CardContent className="flex items-center justify-center h-full">
+          <p className="text-gray-500">Select a feature to view details</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const handleChange = (field) => (e) => {
     setEditedFeature({ ...editedFeature, [field]: e.target.value });
