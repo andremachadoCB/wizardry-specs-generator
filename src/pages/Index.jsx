@@ -256,7 +256,6 @@ const Index = () => {
         ]
       }
     ],
-    ],
     userTypes: [],
     knowledgeGraph: { nodes: [], links: [] },
     dataModels: { entities: [], relationships: [] },
