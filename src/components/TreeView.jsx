@@ -1,9 +1,8 @@
 import React from 'react';
-import { ChevronDown, ChevronRight, Folder, File } from 'lucide-react';
+import { ChevronRight, ChevronDown } from 'lucide-react';
 
 const TreeNode = ({ node, onSelect, selectedFeature }) => {
   const [isOpen, setIsOpen] = React.useState(false);
-
   const toggleOpen = () => setIsOpen(!isOpen);
 
   const handleSelect = () => {
@@ -15,20 +14,17 @@ const TreeNode = ({ node, onSelect, selectedFeature }) => {
   const isSelected = selectedFeature && node.type === 'feature' && node.name === selectedFeature.name;
 
   return (
-    <div>
+    <div className="ml-4">
       <div 
-        className={`flex items-center cursor-pointer ${node.type === 'category' ? 'font-semibold' : ''} ${isSelected ? 'bg-blue-100 text-blue-600' : ''}`}
+        className={`flex items-center cursor-pointer ${node.type === 'category' ? 'font-semibold' : ''} ${isSelected ? 'text-blue-600' : ''}`}
         onClick={node.type === 'category' ? toggleOpen : handleSelect}
       >
-        {node.type === 'category' ? (
-          isOpen ? <ChevronDown className="w-4 h-4 mr-1" /> : <ChevronRight className="w-4 h-4 mr-1" />
-        ) : (
-          <File className="w-4 h-4 mr-1" />
+        {node.type === 'category' && (
+          <span className="mr-1">{isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}</span>
         )}
-        {node.type === 'category' && <Folder className="w-4 h-4 mr-1" />}
         <span>{node.name}</span>
       </div>
-      {isOpen && node.type === 'category' && Array.isArray(node.features) && (
+      {isOpen && node.type === 'category' && node.features && (
         <div className="ml-4">
           {node.features.map((feature) => (
             <TreeNode 
