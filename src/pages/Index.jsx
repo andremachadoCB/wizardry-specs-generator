@@ -19,7 +19,7 @@ const Index = () => {
   const [fileContent, setFileContent] = useState('');
   const [artifacts, setArtifacts] = useState({
     technicalSummary: '',
-    prd: '',
+    prd: [],
     userTypes: [],
     knowledgeGraph: { nodes: [], links: [] },
     dataModels: { entities: [], relationships: [] },
@@ -54,14 +54,24 @@ const Index = () => {
     onSuccess: (data) => {
       setArtifacts({
         technicalSummary: data.file_summary,
-        prd: JSON.stringify(data.categories, null, 2),
-        userTypes: data.user_types,
+        prd: data.categories || artifacts.prd,
+        userTypes: data.user_types || [],
         knowledgeGraph: parseKnowledgeGraph(data.graph),
         dataModels: data.data_models || { entities: [], relationships: [] },
       });
       setFileContent(fileContent || '');
     },
   });
+
+  const getNodeColor = (type) => {
+    const colorMap = {
+      Program: '#FF6B6B',
+      File: '#CCCCCC',
+      Procedure: '#45B7D1',
+      Variable: '#FFA07A',
+    };
+    return colorMap[type] || '#CCCCCC';
+  };
 
   const handleGenerateSpecs = async () => {
     if (selectedFile) {
@@ -75,16 +85,6 @@ const Index = () => {
         console.error('Error generating specs:', error);
       }
     }
-  };
-
-  const getNodeColor = (type) => {
-    const colorMap = {
-      Program: '#FF6B6B',
-      File: '#CCCCCC',
-      Procedure: '#45B7D1',
-      Variable: '#FFA07A',
-    };
-    return colorMap[type] || '#CCCCCC';
   };
 
   const handleFileSelect = async (file) => {
@@ -110,6 +110,18 @@ const Index = () => {
 
   const handleLanguageChange = (value) => {
     setSelectedLanguage(value);
+  };
+
+  const handleFeatureUpdate = (updatedFeature) => {
+    setArtifacts(prevArtifacts => ({
+      ...prevArtifacts,
+      prd: prevArtifacts.prd.map(category => ({
+        ...category,
+        features: category.features.map(feature => 
+          feature.feature_name === updatedFeature.feature_name ? updatedFeature : feature
+        )
+      }))
+    }));
   };
 
   const isGenerateDisabled = !selectedRepo || !selectedFile || fileAnalysisMutation.isPending;
@@ -156,7 +168,7 @@ const Index = () => {
             </Button>
           </div>
           <div className="flex-1 overflow-hidden flex flex-col">
-            <ArtifactTabs artifacts={artifacts} />
+            <ArtifactTabs artifacts={artifacts} onFeatureUpdate={handleFeatureUpdate} />
           </div>
         </div>
       </div>
