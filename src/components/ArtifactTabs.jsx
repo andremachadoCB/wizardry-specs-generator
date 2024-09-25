@@ -22,7 +22,7 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
     <Tabs defaultValue="technicalSummary" className="bg-white rounded-lg p-4">
       <TabsList>
         <TabsTrigger value="technicalSummary">Technical Summary</TabsTrigger>
-        <TabsTrigger value="prd">PRD</TabsTrigger>
+        <TabsTrigger value="systemSpec">System Specification</TabsTrigger>
         <TabsTrigger value="userTypes">User Types</TabsTrigger>
         <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
         <TabsTrigger value="dataModels">Data Models</TabsTrigger>
@@ -30,7 +30,7 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
       <TabsContent value="technicalSummary">
         <ArtifactPanel title="Technical Summary" content={artifacts.technicalSummary} />
       </TabsContent>
-      <TabsContent value="prd">
+      <TabsContent value="systemSpec">
         <div className="flex">
           <div className="w-2/5 pr-2">
             <PRDTreeView 
