@@ -51,10 +51,29 @@ const TreeNode = ({ node, onSelect, selectedFeature, level = 0 }) => {
 };
 
 const PRDTreeView = ({ data, onSelect, selectedFeature }) => {
+  const groupFeaturesByType = (category) => {
+    const groupedFeatures = category.features.reduce((acc, feature) => {
+      const type = feature.requirement_type[0].split(' ')[0].toLowerCase();
+      if (!acc[type]) {
+        acc[type] = [];
+      }
+      acc[type].push(feature);
+      return acc;
+    }, {});
+
+    return {
+      ...category,
+      featureTypes: groupedFeatures,
+      features: undefined // Remove the original features array
+    };
+  };
+
+  const groupedData = data.map(groupFeaturesByType);
+
   return (
     <div className="bg-white rounded-lg p-4 h-[calc(100vh-200px)] overflow-auto">
       <h2 className="text-2xl font-bold mb-4">System Specification</h2>
-      {data.map((category) => (
+      {groupedData.map((category) => (
         <TreeNode
           key={category.category_name}
           node={category}
