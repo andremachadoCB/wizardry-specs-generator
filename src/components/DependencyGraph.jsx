@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import ReactFlow, { 
   Background, 
   Controls,
@@ -22,6 +22,10 @@ const CustomNode = ({ data }) => {
       <Handle type="source" position={Position.Right} />
     </div>
   );
+};
+
+const nodeTypes = {
+  custom: CustomNode,
 };
 
 const defaultData = {
@@ -186,14 +190,10 @@ const DependencyGraph = ({ data = defaultData }) => {
     return { nodes, edges };
   }, []);
 
-  const { nodes, edges } = createNodes(data);
+  const { nodes, edges } = useMemo(() => createNodes(data), [data, createNodes]);
 
   const [flowNodes, setNodes, onNodesChange] = useNodesState(nodes);
   const [flowEdges, setEdges, onEdgesChange] = useEdgesState(edges);
-
-  const nodeTypes = {
-    custom: CustomNode,
-  };
 
   if (!data || typeof data !== 'object' || !data.analysis) {
     return <div>No valid data available for the dependency graph.</div>;
