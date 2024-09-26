@@ -28,93 +28,7 @@ const nodeTypes = {
   custom: CustomNode,
 };
 
-const defaultData = {
-  "file_path": "app/cbl/CBACT01C.cbl",
-  "analysis": {
-    "File Operations": [
-      "Open account file",
-      "Read next record from account file",
-      "Display account record",
-      "Close account file",
-      "Display I/O status",
-      "Abend program on error"
-    ],
-    "Data Structures": [
-      "Account file record structure",
-      "File status variables",
-      "I/O status variables",
-      "Binary and alphanumeric fields",
-      "Application result codes",
-      "End-of-file indicator"
-    ],
-    "Error Handling": [
-      "Check file status",
-      "Display error messages",
-      "Move status to I/O status",
-      "Perform abend routine"
-    ],
-    "Program Metadata": [
-      "Program ID",
-      "Author",
-      "Last Modified",
-      "Description",
-      "Application",
-      "Program Type"
-    ],
-    "Related Programs": {
-      "Account Data Operations": [
-        "CBACT01C.cbl - Read and print account data file",
-        "CBACT02C.cbl - Read and print card data file",
-        "CBACT03C.cbl - Read and print account cross-reference data file",
-        "CBACT04C.cbl - Interest calculator program"
-      ],
-      "File Operations": [
-        "Open account file",
-        "Read next record",
-        "Display record",
-        "Close file",
-        "Display I/O status",
-        "Abend program on error"
-      ],
-      "Data Structures": [
-        "Account file record structure",
-        "Card file record structure",
-        "Cross-reference file record structure",
-        "Interest calculation data structures",
-        "File status variables",
-        "I/O status variables",
-        "Binary and alphanumeric fields",
-        "Application result codes",
-        "End-of-file indicator"
-      ],
-      "Error Handling": [
-        "Check file status",
-        "Display error messages",
-        "Move status to I/O status",
-        "Perform abend routine"
-      ],
-      "Program Metadata": [
-        "Program ID",
-        "Author",
-        "Last Modified",
-        "Description",
-        "Application",
-        "Program Type"
-      ]
-    },
-    "External Dependencies": [
-      "JCL Job - ACCTFILE.jcl",
-      "Components - CBACT02C.cbl, CBACT03C.cbl, CBACT04C.cbl"
-    ],
-    "Execution Flow": [
-      "Open Input Files",
-      "Process Records",
-      "Close Files"
-    ]
-  }
-};
-
-const DependencyGraph = ({ data = defaultData }) => {
+const DependencyGraph = ({ data }) => {
   const createNodes = useCallback((analysisData) => {
     if (!analysisData || typeof analysisData !== 'object' || !analysisData.analysis) {
       console.error('Invalid analysis data:', analysisData);
@@ -132,7 +46,7 @@ const DependencyGraph = ({ data = defaultData }) => {
         id,
         type: 'custom',
         position: { x, y },
-        data: { label, count },
+        data: { label: typeof label === 'string' ? label : JSON.stringify(label), count },
       });
     };
 
