@@ -19,6 +19,23 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
     setSelectedFeature(updatedFeature);
   };
 
+  // Group features by requirement type
+  const groupFeaturesByType = (categories) => {
+    return categories.map(category => ({
+      ...category,
+      featureTypes: category.features.reduce((acc, feature) => {
+        const type = feature.requirement_type[0].split(' ')[0].toLowerCase();
+        if (!acc[type]) {
+          acc[type] = [];
+        }
+        acc[type].push(feature);
+        return acc;
+      }, {})
+    }));
+  };
+
+  const groupedCategories = groupFeaturesByType(artifacts.prd);
+
   return (
     <Tabs defaultValue="technicalSummary" className="bg-white rounded-lg p-4">
       <TabsList>
@@ -36,7 +53,7 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
         <div className="flex">
           <div className="w-2/5 pr-2">
             <PRDTreeView 
-              data={artifacts.prd} 
+              data={groupedCategories} 
               onSelect={handleFeatureSelect}
               selectedFeature={selectedFeature}
             />

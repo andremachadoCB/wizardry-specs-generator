@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronRight, ChevronDown } from 'lucide-react';
 
-const TreeNode = ({ node, onSelect, selectedFeature }) => {
+const TreeNode = ({ node, onSelect, selectedFeature, level = 0 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const toggleOpen = () => setIsOpen(!isOpen);
 
@@ -14,24 +14,34 @@ const TreeNode = ({ node, onSelect, selectedFeature }) => {
   const isSelected = selectedFeature && node.feature_name === selectedFeature.feature_name;
 
   return (
-    <div className="ml-4">
+    <div className={`ml-${level * 4}`}>
       <div 
-        className={`flex items-center cursor-pointer ${node.category_name ? 'font-semibold' : ''} ${isSelected ? 'text-blue-600' : ''}`}
-        onClick={node.category_name ? toggleOpen : handleSelect}
+        className={`flex items-center cursor-pointer ${node.category_name || node.type ? 'font-semibold' : ''} ${isSelected ? 'text-blue-600' : ''}`}
+        onClick={node.category_name || node.type ? toggleOpen : handleSelect}
       >
-        {node.category_name && (
+        {(node.category_name || node.type || (node.features && node.features.length > 0)) && (
           <span className="mr-1">{isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}</span>
         )}
-        <span>{node.category_name || node.feature_name}</span>
+        <span>{node.category_name || node.type || node.feature_name}</span>
       </div>
-      {isOpen && node.category_name && Array.isArray(node.features) && (
+      {isOpen && (
         <div className="ml-4">
-          {node.features.map((feature) => (
+          {node.featureTypes && Object.entries(node.featureTypes).map(([type, features]) => (
+            <TreeNode
+              key={type}
+              node={{ type: type.charAt(0).toUpperCase() + type.slice(1), features }}
+              onSelect={onSelect}
+              selectedFeature={selectedFeature}
+              level={level + 1}
+            />
+          ))}
+          {node.features && node.features.map((feature) => (
             <TreeNode 
               key={feature.feature_name} 
               node={feature} 
               onSelect={onSelect}
               selectedFeature={selectedFeature}
+              level={level + 1}
             />
           ))}
         </div>
