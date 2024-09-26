@@ -37,14 +37,14 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
   const groupedCategories = groupFeaturesByType(artifacts.prd);
 
   return (
-    <Tabs defaultValue="technicalSummary" className="bg-white rounded-lg p-4">
+    <Tabs defaultValue="systemSpec" className="bg-white rounded-lg p-4">
       <TabsList>
-        <TabsTrigger value="technicalSummary">Technical Summary</TabsTrigger>
+        {/* <TabsTrigger value="technicalSummary">Technical Summary</TabsTrigger> */}
         <TabsTrigger value="systemSpec">System Specification</TabsTrigger>
         <TabsTrigger value="userTypes">User Types</TabsTrigger>
         <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
         <TabsTrigger value="dependencyGraph">Dependency Graph</TabsTrigger>
-        <TabsTrigger value="dataModels">Data Models</TabsTrigger>
+        {/* <TabsTrigger value="dataModels">Data Models</TabsTrigger> */}
       </TabsList>
       <TabsContent value="technicalSummary">
         <ArtifactPanel title="Technical Summary" content={artifacts.technicalSummary} />
