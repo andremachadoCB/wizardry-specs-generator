@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
@@ -15,6 +15,7 @@ const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
+  const [hasLoadedFiles, setHasLoadedFiles] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [fileContent, setFileContent] = useState('');
   const [artifacts, setArtifacts] = useState({
@@ -26,6 +27,13 @@ const Index = () => {
     dataModels: { entities: [], relationships: [] },
     analysis: {},
   });
+
+  useEffect(() => {
+    if (selectedRepo && !hasLoadedFiles) {
+        // Load the files here and then set hasLoadedFiles to true
+        setHasLoadedFiles(true);
+      }
+  }, [selectedRepo, hasLoadedFiles]);
 
   const parseKnowledgeGraph = (graphData) => {
     if (!graphData || !graphData.nodes || !graphData.links) {
@@ -148,7 +156,7 @@ const Index = () => {
         <FileExplorer
           selectedRepo={selectedRepo}
           onSelectFile={handleFileSelect}
-          shouldLoadFiles={shouldLoadFiles}
+          shouldLoadFiles={hasLoadedFiles}
           handleLoadFiles={handleLoadFiles}
           selectedFile={selectedFile}
         />
