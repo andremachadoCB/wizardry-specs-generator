@@ -1,12 +1,28 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, memo } from 'react';
 import ReactFlow, { 
   Background, 
-  Controls, 
-  MiniMap, 
+  Controls,
   useNodesState, 
   useEdgesState,
+  Handle,
+  Position,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+
+const CustomNode = memo(({ data }) => {
+  return (
+    <div className="px-2 py-1 shadow-md rounded-md bg-white border border-gray-300">
+      <Handle type="target" position={Position.Left} />
+      <div className="flex items-center">
+        <span className="text-xs font-medium">{data.label}</span>
+        {data.count && (
+          <span className="ml-1 px-1 bg-gray-200 rounded-full text-xs">{data.count}</span>
+        )}
+      </div>
+      <Handle type="source" position={Position.Right} />
+    </div>
+  );
+});
 
 const DependencyGraph = ({ data }) => {
   const createNodes = useCallback((analysisData) => {
@@ -17,111 +33,58 @@ const DependencyGraph = ({ data }) => {
 
     const nodes = [];
     const edges = [];
-    let xPosition = 0;
-    const ySpacing = 100;
+    let yPosition = 0;
+    const xSpacing = 250;
+    const ySpacing = 50;
+
+    const addNode = (id, label, x, y, count = null) => {
+      nodes.push({
+        id,
+        type: 'custom',
+        position: { x, y },
+        data: { label, count },
+      });
+    };
+
+    const addEdge = (source, target) => {
+      edges.push({
+        id: `${source}-${target}`,
+        source,
+        target,
+        type: 'smoothstep',
+      });
+    };
 
     // Add file path node
     const filePath = analysisData.file_path || 'Unknown File';
-    nodes.push({
-      id: 'file_path',
-      data: { label: filePath },
-      position: { x: xPosition, y: 0 },
-      style: {
-        background: '#1A192B',
-        color: 'white',
-        border: '1px solid #777',
-        width: 200,
-      },
-    });
-    xPosition += 300;
+    addNode('file_path', filePath, 0, 0);
 
-    // Add analysis nodes
-    if (analysisData.analysis && typeof analysisData.analysis === 'object') {
-      Object.entries(analysisData.analysis).forEach(([key, value], index) => {
-        const nodeId = `analysis_${key}`;
-        nodes.push({
-          id: nodeId,
-          data: { label: key },
-          position: { x: xPosition, y: index * ySpacing },
-          style: {
-            background: '#f0f0f0',
-            border: '1px solid #999',
-            width: 200,
-          },
-        });
-        edges.push({
-          id: `edge_${nodeId}`,
-          source: 'file_path',
-          target: nodeId,
-          animated: true,
-        });
+    // Process main categories
+    Object.entries(analysisData.analysis).forEach(([category, items], index) => {
+      const categoryId = `category_${index}`;
+      addNode(categoryId, category, xSpacing, yPosition, Object.keys(items).length);
+      addEdge('file_path', categoryId);
 
-        // Add value nodes
-        if (Array.isArray(value)) {
-          value.forEach((item, itemIndex) => {
-            const valueNodeId = `${nodeId}_value_${itemIndex}`;
-            nodes.push({
-              id: valueNodeId,
-              data: { label: item },
-              position: { x: xPosition + 250, y: index * ySpacing + itemIndex * 50 },
-              style: {
-                background: '#e6f7ff',
-                border: '1px solid #91d5ff',
-                width: 200,
-                fontSize: '10px',
-              },
-            });
-            edges.push({
-              id: `edge_${valueNodeId}`,
-              source: nodeId,
-              target: valueNodeId,
-            });
+      // Process items within each category
+      Object.entries(items).forEach(([item, subItems], itemIndex) => {
+        const itemId = `${categoryId}_item_${itemIndex}`;
+        addNode(itemId, item, xSpacing * 2, yPosition);
+        addEdge(categoryId, itemId);
+
+        if (Array.isArray(subItems)) {
+          subItems.forEach((subItem, subIndex) => {
+            const subItemId = `${itemId}_sub_${subIndex}`;
+            addNode(subItemId, subItem, xSpacing * 3, yPosition);
+            addEdge(itemId, subItemId);
+            yPosition += ySpacing;
           });
-        } else if (typeof value === 'object' && value !== null) {
-          Object.entries(value).forEach(([subKey, subValue], subIndex) => {
-            const subNodeId = `${nodeId}_${subKey}`;
-            nodes.push({
-              id: subNodeId,
-              data: { label: subKey },
-              position: { x: xPosition + 250, y: index * ySpacing + subIndex * 50 },
-              style: {
-                background: '#fff1f0',
-                border: '1px solid #ffa39e',
-                width: 200,
-                fontSize: '10px',
-              },
-            });
-            edges.push({
-              id: `edge_${subNodeId}`,
-              source: nodeId,
-              target: subNodeId,
-            });
-
-            if (Array.isArray(subValue)) {
-              subValue.forEach((subItem, subItemIndex) => {
-                const subValueNodeId = `${subNodeId}_value_${subItemIndex}`;
-                nodes.push({
-                  id: subValueNodeId,
-                  data: { label: subItem },
-                  position: { x: xPosition + 500, y: index * ySpacing + subIndex * 50 + subItemIndex * 25 },
-                  style: {
-                    background: '#f6ffed',
-                    border: '1px solid #b7eb8f',
-                    width: 200,
-                    fontSize: '8px',
-                  },
-                });
-                edges.push({
-                  id: `edge_${subValueNodeId}`,
-                  source: subNodeId,
-                  target: subValueNodeId,
-                });
-              });
-            }
-          });
+        } else {
+          yPosition += ySpacing;
         }
       });
-    }
+
+      yPosition += ySpacing * 2;
+    });
 
     return { nodes, edges };
   }, []);
@@ -131,10 +94,9 @@ const DependencyGraph = ({ data }) => {
   const [flowNodes, setNodes, onNodesChange] = useNodesState(nodes);
   const [flowEdges, setEdges, onEdgesChange] = useEdgesState(edges);
 
-  const onInit = useCallback((reactFlowInstance) => {
-    console.log('flow loaded:', reactFlowInstance);
-    reactFlowInstance.fitView();
-  }, []);
+  const nodeTypes = {
+    custom: CustomNode,
+  };
 
   if (!data || typeof data !== 'object') {
     return <div>No valid data available for the dependency graph.</div>;
@@ -147,13 +109,12 @@ const DependencyGraph = ({ data }) => {
         edges={flowEdges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
-        onInit={onInit}
+        nodeTypes={nodeTypes}
         fitView
         attributionPosition="bottom-left"
       >
-        <MiniMap />
         <Controls />
-        <Background color="#aaa" gap={16} />
+        <Background color="#f0f0f0" gap={16} />
       </ReactFlow>
     </div>
   );
