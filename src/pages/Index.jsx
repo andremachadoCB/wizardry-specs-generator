@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
@@ -15,7 +15,6 @@ const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
   const [selectedFile, setSelectedFile] = useState(null);
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
-  const [hasLoadedFiles, setHasLoadedFiles] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [fileContent, setFileContent] = useState('');
   const [artifacts, setArtifacts] = useState({
@@ -27,31 +26,6 @@ const Index = () => {
     dataModels: { entities: [], relationships: [] },
     analysis: {},
   });
-
-  useEffect(() => {
-    if (selectedRepo && !hasLoadedFiles) {
-        // Load the files here and then set hasLoadedFiles to true
-        setHasLoadedFiles(true);
-      }
-  }, [selectedRepo, hasLoadedFiles]);
-
-  const parseKnowledgeGraph = (graphData) => {
-    if (!graphData || !graphData.nodes || !graphData.links) {
-      return { nodes: [], links: [] };
-    }
-    const nodes = graphData.nodes.map(node => ({
-      id: node.id,
-      name: node.label,
-      type: node.type,
-      color: getNodeColor(node.type),
-    }));
-    const links = graphData.links.map(link => ({
-      source: link.source,
-      target: link.target,
-      label: link.label,
-    }));
-    return { nodes, links };
-  };
 
   const fileAnalysisMutation = useMutation({
     mutationFn: ({ url, file_path }) => fetchWithApiUrl('/api/repos/file/reason', {
@@ -74,6 +48,24 @@ const Index = () => {
       setFileContent(fileContent || '');
     },
   });
+
+  const parseKnowledgeGraph = (graphData) => {
+    if (!graphData || !graphData.nodes || !graphData.links) {
+      return { nodes: [], links: [] };
+    }
+    const nodes = graphData.nodes.map(node => ({
+      id: node.id,
+      name: node.label,
+      type: node.type,
+      color: getNodeColor(node.type),
+    }));
+    const links = graphData.links.map(link => ({
+      source: link.source,
+      target: link.target,
+      label: link.label,
+    }));
+    return { nodes, links };
+  };
 
   const getNodeColor = (type) => {
     const colorMap = {
@@ -156,7 +148,7 @@ const Index = () => {
         <FileExplorer
           selectedRepo={selectedRepo}
           onSelectFile={handleFileSelect}
-          shouldLoadFiles={hasLoadedFiles}
+          shouldLoadFiles={shouldLoadFiles}
           handleLoadFiles={handleLoadFiles}
           selectedFile={selectedFile}
         />
