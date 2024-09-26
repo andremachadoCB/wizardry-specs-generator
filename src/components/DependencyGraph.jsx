@@ -9,50 +9,130 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 
 const DependencyGraph = ({ data }) => {
-  const initialNodes = [
-    {
-      id: 'main',
-      type: 'input',
-      data: { label: 'Custom Color Picker Node: #1A192B' },
-      position: { x: 250, y: 0 },
+  const createNodes = (analysisData) => {
+    const nodes = [];
+    const edges = [];
+    let xPosition = 0;
+    const ySpacing = 100;
+
+    // Add file path node
+    nodes.push({
+      id: 'file_path',
+      data: { label: analysisData.file_path },
+      position: { x: xPosition, y: 0 },
       style: {
         background: '#1A192B',
         color: 'white',
         border: '1px solid #777',
-        width: 250,
+        width: 200,
       },
-    },
-    {
-      id: 'outputA',
-      type: 'output',
-      data: { label: 'Output A' },
-      position: { x: 100, y: 100 },
-    },
-    {
-      id: 'outputB',
-      type: 'output',
-      data: { label: 'Output B' },
-      position: { x: 400, y: 100 },
-    },
-  ];
+    });
+    xPosition += 300;
 
-  const initialEdges = [
-    { id: 'main-outputA', source: 'main', target: 'outputA', animated: true },
-    { id: 'main-outputB', source: 'main', target: 'outputB', animated: true },
-  ];
+    // Add analysis nodes
+    Object.entries(analysisData.analysis).forEach(([key, value], index) => {
+      const nodeId = `analysis_${key}`;
+      nodes.push({
+        id: nodeId,
+        data: { label: key },
+        position: { x: xPosition, y: index * ySpacing },
+        style: {
+          background: '#f0f0f0',
+          border: '1px solid #999',
+          width: 200,
+        },
+      });
+      edges.push({
+        id: `edge_${nodeId}`,
+        source: 'file_path',
+        target: nodeId,
+        animated: true,
+      });
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+      // Add value nodes
+      if (Array.isArray(value)) {
+        value.forEach((item, itemIndex) => {
+          const valueNodeId = `${nodeId}_value_${itemIndex}`;
+          nodes.push({
+            id: valueNodeId,
+            data: { label: item },
+            position: { x: xPosition + 250, y: index * ySpacing + itemIndex * 50 },
+            style: {
+              background: '#e6f7ff',
+              border: '1px solid #91d5ff',
+              width: 200,
+              fontSize: '10px',
+            },
+          });
+          edges.push({
+            id: `edge_${valueNodeId}`,
+            source: nodeId,
+            target: valueNodeId,
+          });
+        });
+      } else if (typeof value === 'object') {
+        Object.entries(value).forEach(([subKey, subValue], subIndex) => {
+          const subNodeId = `${nodeId}_${subKey}`;
+          nodes.push({
+            id: subNodeId,
+            data: { label: subKey },
+            position: { x: xPosition + 250, y: index * ySpacing + subIndex * 50 },
+            style: {
+              background: '#fff1f0',
+              border: '1px solid #ffa39e',
+              width: 200,
+              fontSize: '10px',
+            },
+          });
+          edges.push({
+            id: `edge_${subNodeId}`,
+            source: nodeId,
+            target: subNodeId,
+          });
+
+          if (Array.isArray(subValue)) {
+            subValue.forEach((subItem, subItemIndex) => {
+              const subValueNodeId = `${subNodeId}_value_${subItemIndex}`;
+              nodes.push({
+                id: subValueNodeId,
+                data: { label: subItem },
+                position: { x: xPosition + 500, y: index * ySpacing + subIndex * 50 + subItemIndex * 25 },
+                style: {
+                  background: '#f6ffed',
+                  border: '1px solid #b7eb8f',
+                  width: 200,
+                  fontSize: '8px',
+                },
+              });
+              edges.push({
+                id: `edge_${subValueNodeId}`,
+                source: subNodeId,
+                target: subValueNodeId,
+              });
+            });
+          }
+        });
+      }
+    });
+
+    return { nodes, edges };
+  };
+
+  const { nodes, edges } = createNodes(data);
+
+  const [flowNodes, setNodes, onNodesChange] = useNodesState(nodes);
+  const [flowEdges, setEdges, onEdgesChange] = useEdgesState(edges);
 
   const onInit = useCallback((reactFlowInstance) => {
     console.log('flow loaded:', reactFlowInstance);
+    reactFlowInstance.fitView();
   }, []);
 
   return (
-    <div style={{ width: '100%', height: '500px' }}>
+    <div style={{ width: '100%', height: '600px' }}>
       <ReactFlow
-        nodes={nodes}
-        edges={edges}
+        nodes={flowNodes}
+        edges={flowEdges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onInit={onInit}
