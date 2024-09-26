@@ -5,7 +5,7 @@ import logoPlaceholder from '../assets/logo.png';
 const Navbar = () => {
   return (
     <nav className="bg-crowdbotics-button text-crowdbotics-text p-4 mb-6">
-      <div className="container mx-auto flex justify-between items-center">
+      {/* <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <a href="https://crowdbotics.com/" target="_blank" rel="noopener noreferrer">
             <img 
@@ -24,7 +24,7 @@ const Navbar = () => {
             <Button variant="outline">Contact</Button>
           </a>
         </div>
-      </div>
+      </div> */}
     </nav>
   );
 };
