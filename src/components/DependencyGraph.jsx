@@ -9,16 +9,22 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 
 const DependencyGraph = ({ data }) => {
-  const createNodes = (analysisData) => {
+  const createNodes = useCallback((analysisData) => {
+    if (!analysisData || typeof analysisData !== 'object') {
+      console.error('Invalid analysis data:', analysisData);
+      return { nodes: [], edges: [] };
+    }
+
     const nodes = [];
     const edges = [];
     let xPosition = 0;
     const ySpacing = 100;
 
     // Add file path node
+    const filePath = analysisData.file_path || 'Unknown File';
     nodes.push({
       id: 'file_path',
-      data: { label: analysisData.file_path },
+      data: { label: filePath },
       position: { x: xPosition, y: 0 },
       style: {
         background: '#1A192B',
@@ -30,93 +36,95 @@ const DependencyGraph = ({ data }) => {
     xPosition += 300;
 
     // Add analysis nodes
-    Object.entries(analysisData.analysis).forEach(([key, value], index) => {
-      const nodeId = `analysis_${key}`;
-      nodes.push({
-        id: nodeId,
-        data: { label: key },
-        position: { x: xPosition, y: index * ySpacing },
-        style: {
-          background: '#f0f0f0',
-          border: '1px solid #999',
-          width: 200,
-        },
-      });
-      edges.push({
-        id: `edge_${nodeId}`,
-        source: 'file_path',
-        target: nodeId,
-        animated: true,
-      });
-
-      // Add value nodes
-      if (Array.isArray(value)) {
-        value.forEach((item, itemIndex) => {
-          const valueNodeId = `${nodeId}_value_${itemIndex}`;
-          nodes.push({
-            id: valueNodeId,
-            data: { label: item },
-            position: { x: xPosition + 250, y: index * ySpacing + itemIndex * 50 },
-            style: {
-              background: '#e6f7ff',
-              border: '1px solid #91d5ff',
-              width: 200,
-              fontSize: '10px',
-            },
-          });
-          edges.push({
-            id: `edge_${valueNodeId}`,
-            source: nodeId,
-            target: valueNodeId,
-          });
+    if (analysisData.analysis && typeof analysisData.analysis === 'object') {
+      Object.entries(analysisData.analysis).forEach(([key, value], index) => {
+        const nodeId = `analysis_${key}`;
+        nodes.push({
+          id: nodeId,
+          data: { label: key },
+          position: { x: xPosition, y: index * ySpacing },
+          style: {
+            background: '#f0f0f0',
+            border: '1px solid #999',
+            width: 200,
+          },
         });
-      } else if (typeof value === 'object') {
-        Object.entries(value).forEach(([subKey, subValue], subIndex) => {
-          const subNodeId = `${nodeId}_${subKey}`;
-          nodes.push({
-            id: subNodeId,
-            data: { label: subKey },
-            position: { x: xPosition + 250, y: index * ySpacing + subIndex * 50 },
-            style: {
-              background: '#fff1f0',
-              border: '1px solid #ffa39e',
-              width: 200,
-              fontSize: '10px',
-            },
-          });
-          edges.push({
-            id: `edge_${subNodeId}`,
-            source: nodeId,
-            target: subNodeId,
-          });
+        edges.push({
+          id: `edge_${nodeId}`,
+          source: 'file_path',
+          target: nodeId,
+          animated: true,
+        });
 
-          if (Array.isArray(subValue)) {
-            subValue.forEach((subItem, subItemIndex) => {
-              const subValueNodeId = `${subNodeId}_value_${subItemIndex}`;
-              nodes.push({
-                id: subValueNodeId,
-                data: { label: subItem },
-                position: { x: xPosition + 500, y: index * ySpacing + subIndex * 50 + subItemIndex * 25 },
-                style: {
-                  background: '#f6ffed',
-                  border: '1px solid #b7eb8f',
-                  width: 200,
-                  fontSize: '8px',
-                },
-              });
-              edges.push({
-                id: `edge_${subValueNodeId}`,
-                source: subNodeId,
-                target: subValueNodeId,
-              });
+        // Add value nodes
+        if (Array.isArray(value)) {
+          value.forEach((item, itemIndex) => {
+            const valueNodeId = `${nodeId}_value_${itemIndex}`;
+            nodes.push({
+              id: valueNodeId,
+              data: { label: item },
+              position: { x: xPosition + 250, y: index * ySpacing + itemIndex * 50 },
+              style: {
+                background: '#e6f7ff',
+                border: '1px solid #91d5ff',
+                width: 200,
+                fontSize: '10px',
+              },
             });
-          }
-        });
-      }
-    });
+            edges.push({
+              id: `edge_${valueNodeId}`,
+              source: nodeId,
+              target: valueNodeId,
+            });
+          });
+        } else if (typeof value === 'object' && value !== null) {
+          Object.entries(value).forEach(([subKey, subValue], subIndex) => {
+            const subNodeId = `${nodeId}_${subKey}`;
+            nodes.push({
+              id: subNodeId,
+              data: { label: subKey },
+              position: { x: xPosition + 250, y: index * ySpacing + subIndex * 50 },
+              style: {
+                background: '#fff1f0',
+                border: '1px solid #ffa39e',
+                width: 200,
+                fontSize: '10px',
+              },
+            });
+            edges.push({
+              id: `edge_${subNodeId}`,
+              source: nodeId,
+              target: subNodeId,
+            });
+
+            if (Array.isArray(subValue)) {
+              subValue.forEach((subItem, subItemIndex) => {
+                const subValueNodeId = `${subNodeId}_value_${subItemIndex}`;
+                nodes.push({
+                  id: subValueNodeId,
+                  data: { label: subItem },
+                  position: { x: xPosition + 500, y: index * ySpacing + subIndex * 50 + subItemIndex * 25 },
+                  style: {
+                    background: '#f6ffed',
+                    border: '1px solid #b7eb8f',
+                    width: 200,
+                    fontSize: '8px',
+                  },
+                });
+                edges.push({
+                  id: `edge_${subValueNodeId}`,
+                  source: subNodeId,
+                  target: subValueNodeId,
+                });
+              });
+            }
+          });
+        }
+      });
+    }
 
     return { nodes, edges };
-  };
+  }, []);
 
   const { nodes, edges } = createNodes(data);
 
@@ -127,6 +135,10 @@ const DependencyGraph = ({ data }) => {
     console.log('flow loaded:', reactFlowInstance);
     reactFlowInstance.fitView();
   }, []);
+
+  if (!data || typeof data !== 'object') {
+    return <div>No valid data available for the dependency graph.</div>;
+  }
 
   return (
     <div style={{ width: '100%', height: '600px' }}>
