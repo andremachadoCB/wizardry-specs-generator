@@ -1,4 +1,4 @@
-import React, { useCallback, memo } from 'react';
+import React, { useCallback } from 'react';
 import ReactFlow, { 
   Background, 
   Controls,
@@ -9,7 +9,7 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
-const CustomNode = memo(({ data }) => {
+const CustomNode = ({ data }) => {
   return (
     <div className="px-2 py-1 shadow-md rounded-md bg-white border border-gray-300">
       <Handle type="target" position={Position.Left} />
@@ -22,11 +22,10 @@ const CustomNode = memo(({ data }) => {
       <Handle type="source" position={Position.Right} />
     </div>
   );
-});
+};
 
 const defaultData = {
   "file_path": "app/cbl/CBACT01C.cbl",
-  "file_summary": "# Program Summary: `CBACT01C.CBL`\n\n## General Information\n- **Program Name**: CBACT01C\n- **Description**: Read and print account data file.\n- **Application**: CardDemo\n- **Author**: AWS\n- **Program Type**: Batch COBOL Program\n- **Last Modified**: 2022-07-19\n\n---\n\n## File I/O Operations\n\n### Input Files\n- **File Name**: `SELECT ACCTFILE-FILE`\n  - **Access Mode**: SEQUENTIAL\n  - **Record Key**: `FD-ACCT-ID`\n  - **File Status**: `ACCTFILE-STATUS`\n\n---\n\n## Copybook References\n- **Copybook**: `COPY CVACT01Y`\n\n---\n\n## Key Sections\n\n### Identification Division\n- **Program ID**: CBACT01C\n- **Author**: AWS\n\n### Environment Division\n- **Input-Output Section**\n  - **File Assignments**: Lists and describes the files associated with the program.\n\n### Data Division\n- **File Section**\n  - **Input Record Structures**: Describes the structure of the account file record.\n\n### Procedure Division\n- **Main Procedures**:\n  - `0000-ACCTFILE-OPEN`: Opens the account file.\n  - `1000-ACCTFILE-GET-NEXT`: Reads the next record from the account file.\n  - `1100-DISPLAY-ACCT-RECORD`: Displays the account record.\n  - `9000-ACCTFILE-CLOSE`: Closes the account file.\n  - `9910-DISPLAY-IO-STATUS`: Displays the I/O status.\n  - `9999-ABEND-PROGRAM`: Abends the program in case of an error.\n\n---\n\n## Data Structures\n\n### Record Definitions\n- **Record Name**: `FD-ACCTFILE-REC`\n  - **Field 1**: `FD-ACCT-ID` - `PIC 9(11)`\n  - **Field 2**: `FD-ACCT-DATA` - `PIC X(289)`\n\n---\n\n## Program Logic\n\n### Primary Functions\n- **Function**: Reads records from the account file and displays them.\n- **Function**: Handles file opening, reading, and closing operations.\n\n---\n\n## External Dependencies\n\n### JCL Job\n- **JCL Name**: `ACCTFILE.jcl`\n  \n### Components:\n- **Program Name**: `CBACT02C.cbl`\n- **Program Name**: `CBACT03C.cbl`\n- **Program Name**: `CBACT04C.cbl`\n\n---\n\n## Execution Flow\n\n1. **Open Input Files**\n   - Opens `ACCTFILE-FILE`.\n   \n2. **Process Records**\n   - Reads records from the account file and displays them.\n   \n3. **Close Files**\n   - Closes the account file upon completion.\n\n---\n\n## Error Handling\n\n### File Status Checking\n- **Status Variable**: `ACCTFILE-STATUS` - Describes how file status is handled and which variables are checked.\n\n### Error Messages\n- **Error Description**: `DISPLAY 'ERROR OPENING ACCTFILE'`\n- **Error Description**: `DISPLAY 'ERROR READING ACCOUNT FILE'`\n- **Error Description**: `DISPLAY 'ERROR CLOSING ACCOUNT FILE'`\n\n---\n\n## Program Metadata\n- **Version**: CardDemo_v1.0-15-g27d6c6f-68\n- **Last Reviewed**: 2022-07-19",
   "analysis": {
     "File Operations": [
       "Open account file",
