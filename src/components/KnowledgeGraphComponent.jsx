@@ -24,10 +24,10 @@ const KnowledgeGraphComponent = ({ data }) => {
   }, []);
 
   const colorMap = {
-    Program: '#FF6B6B',
-    File: '#CCCCCC',
-    Procedure: '#45B7D1',
-    Variable: '#FFA07A',
+    System: '#FF6B6B',
+    Component: '#CCCCCC',
+    File: '#45B7D1',
+    Procedure: '#FFA07A',
   };
 
   const Legend = () => (
