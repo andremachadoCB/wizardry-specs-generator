@@ -43,8 +43,8 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
         <TabsTrigger value="systemSpec">System Specification</TabsTrigger>
         <TabsTrigger value="userTypes">User Types</TabsTrigger>
         <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
-        <TabsTrigger value="dataModels">Data Models</TabsTrigger>
         <TabsTrigger value="dependencyGraph">Dependency Graph</TabsTrigger>
+        <TabsTrigger value="dataModels">Data Models</TabsTrigger>
       </TabsList>
       <TabsContent value="technicalSummary">
         <ArtifactPanel title="Technical Summary" content={artifacts.technicalSummary} />
@@ -72,12 +72,13 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
       <TabsContent value="knowledgeGraph">
         <KnowledgeGraphComponent data={artifacts.knowledgeGraph} />
       </TabsContent>
-      <TabsContent value="dataModels">
-        <ERDComponent data={artifacts.dataModels} />
-      </TabsContent>
       <TabsContent value="dependencyGraph">
         <DependencyGraph data={artifacts} />
       </TabsContent>
+      <TabsContent value="dataModels">
+        <ERDComponent data={artifacts.dataModels} />
+      </TabsContent>
+      
     </Tabs>
   );
 };
