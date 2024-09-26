@@ -76,7 +76,7 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
         <ERDComponent data={artifacts.dataModels} />
       </TabsContent>
       <TabsContent value="dependencyGraph">
-        <DependencyGraph data={artifacts.analysis} />
+        <DependencyGraph data={artifacts} />
       </TabsContent>
     </Tabs>
   );
