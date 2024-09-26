@@ -28,13 +28,14 @@ const nodeTypes = {
   custom: CustomNode,
 };
 
-const DependencyGraph = ({ data }) => {
+
+const DependencyGraph = ({ data = defaultData }) => {
   const createNodes = useCallback((analysisData) => {
     if (!analysisData || typeof analysisData !== 'object' || !analysisData.analysis) {
       console.error('Invalid analysis data:', analysisData);
       return { nodes: [], edges: [] };
     }
-
+    console.log('Analysis data:', analysisData);
     const nodes = [];
     const edges = [];
     let yPosition = 0;
@@ -60,7 +61,7 @@ const DependencyGraph = ({ data }) => {
     };
 
     // Add file path node
-    const filePath = analysisData.file_path || 'Unknown File';
+    const filePath = analysisData.filePath || 'Unknown File';
     addNode('file_path', filePath, 0, 0);
 
     // Process main categories

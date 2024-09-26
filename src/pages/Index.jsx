@@ -18,6 +18,7 @@ const Index = () => {
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [fileContent, setFileContent] = useState('');
   const [artifacts, setArtifacts] = useState({
+    filePath: '',
     technicalSummary: '',
     prd: [],
     userTypes: [],
@@ -54,6 +55,7 @@ const Index = () => {
     }),
     onSuccess: (data) => {
       setArtifacts({
+        filePath: data.file_path,
         technicalSummary: data.file_summary,
         prd: data.categories || artifacts.prd,
         userTypes: data.user_types || [],
