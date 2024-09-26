@@ -5,6 +5,7 @@ import KnowledgeGraphComponent from './KnowledgeGraphComponent';
 import ERDComponent from './ERDComponent';
 import PRDTreeView from './PRDTreeView';
 import PRDFeatureDetail from './PRDFeatureDetail';
+import DependencyGraph from './DependencyGraph';
 
 const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
   const [selectedFeature, setSelectedFeature] = useState(null);
@@ -26,6 +27,7 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
         <TabsTrigger value="userTypes">User Types</TabsTrigger>
         <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
         <TabsTrigger value="dataModels">Data Models</TabsTrigger>
+        <TabsTrigger value="dependencyGraph">Dependency Graph</TabsTrigger>
       </TabsList>
       <TabsContent value="technicalSummary">
         <ArtifactPanel title="Technical Summary" content={artifacts.technicalSummary} />
@@ -55,6 +57,9 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
       </TabsContent>
       <TabsContent value="dataModels">
         <ERDComponent data={artifacts.dataModels} />
+      </TabsContent>
+      <TabsContent value="dependencyGraph">
+        <DependencyGraph data={artifacts.analysis} />
       </TabsContent>
     </Tabs>
   );

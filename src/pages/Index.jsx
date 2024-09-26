@@ -23,6 +23,7 @@ const Index = () => {
     userTypes: [],
     knowledgeGraph: { nodes: [], links: [] },
     dataModels: { entities: [], relationships: [] },
+    analysis: {},
   });
 
   const parseKnowledgeGraph = (graphData) => {
@@ -58,6 +59,7 @@ const Index = () => {
         userTypes: data.user_types || [],
         knowledgeGraph: parseKnowledgeGraph(data.graph),
         dataModels: data.data_models || { entities: [], relationships: [] },
+        analysis: data.analysis || {},
       });
       setFileContent(fileContent || '');
     },
