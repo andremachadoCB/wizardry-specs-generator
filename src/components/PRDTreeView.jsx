@@ -3,11 +3,16 @@ import { ChevronRight, ChevronDown } from 'lucide-react';
 
 const getPriorityType = (types) => {
   const priority = ['Subsystem', 'Component', 'Program'];
-  return types.find(type => priority.includes(type)) || types[0];
+  const normalizedTypes = types.map(type => type.toLowerCase());
+  return priority.find(type => normalizedTypes.includes(type.toLowerCase())) || types[0];
 };
 
 const groupFeatures = (data) => {
-  const grouped = {};
+  const grouped = {
+    Subsystem: {},
+    Component: {},
+    Program: {}
+  };
 
   data.forEach(category => {
     category.features.forEach(feature => {
@@ -15,10 +20,21 @@ const groupFeatures = (data) => {
       if (!grouped[type]) {
         grouped[type] = {};
       }
-      if (!grouped[type][category.category_name]) {
-        grouped[type][category.category_name] = [];
+      
+      let subType = '';
+      if (type === 'Component' && feature.requirement_type.length > 1) {
+        subType = feature.requirement_type.find(t => t.toLowerCase() !== 'component') || '';
       }
-      grouped[type][category.category_name].push(feature);
+      
+      if (!grouped[type][subType]) {
+        grouped[type][subType] = {};
+      }
+      
+      if (!grouped[type][subType][category.category_name]) {
+        grouped[type][subType][category.category_name] = [];
+      }
+      
+      grouped[type][subType][category.category_name].push(feature);
     });
   });
 
@@ -40,16 +56,25 @@ const TreeNode = ({ node, onSelect, selectedFeature, level = 0 }) => {
   return (
     <div className={`ml-${level * 4}`}>
       <div 
-        className={`flex items-center cursor-pointer ${node.category_name || node.type ? 'font-semibold' : ''} ${isSelected ? 'text-blue-600' : ''}`}
-        onClick={node.category_name || node.type ? toggleOpen : handleSelect}
+        className={`flex items-center cursor-pointer ${node.type || node.category_name ? 'font-semibold' : ''} ${isSelected ? 'text-blue-600' : ''}`}
+        onClick={node.type || node.category_name ? toggleOpen : handleSelect}
       >
-        {(node.category_name || node.type || node.features) && (
+        {(node.type || node.category_name || node.features) && (
           <span className="mr-1">{isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}</span>
         )}
         <span>{node.type || node.category_name || node.feature_name}</span>
       </div>
       {isOpen && (
         <div className="ml-4">
+          {node.subTypes && Object.entries(node.subTypes).map(([subType, categories]) => (
+            <TreeNode
+              key={subType}
+              node={{ type: subType, categories }}
+              onSelect={onSelect}
+              selectedFeature={selectedFeature}
+              level={level + 1}
+            />
+          ))}
           {node.categories && Object.entries(node.categories).map(([category, features]) => (
             <TreeNode
               key={category}
@@ -80,10 +105,10 @@ const PRDTreeView = ({ data, onSelect, selectedFeature }) => {
   return (
     <div className="bg-white rounded-lg p-4 h-[calc(100vh-200px)] overflow-auto">
       <h2 className="text-2xl font-bold mb-4">System Specification</h2>
-      {Object.entries(groupedData).map(([type, categories]) => (
+      {Object.entries(groupedData).map(([type, subTypes]) => (
         <TreeNode
           key={type}
-          node={{ type, categories }}
+          node={{ type, subTypes }}
           onSelect={onSelect}
           selectedFeature={selectedFeature}
         />
