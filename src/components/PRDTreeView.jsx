@@ -3,7 +3,7 @@ import { ChevronRight, ChevronDown } from 'lucide-react';
 
 const getPriorityType = (types) => {
   const priority = ['Subsystem', 'Component', 'Program'];
-  return types.find(type => priority.includes(type)) || types[0];
+  return types.find(type => priority.includes(type.toLowerCase())) || types[0];
 };
 
 const groupFeatures = (data) => {
@@ -11,14 +11,15 @@ const groupFeatures = (data) => {
 
   data.forEach(category => {
     category.features.forEach(feature => {
-      const type = getPriorityType(feature.requirement_type);
-      if (!grouped[type]) {
-        grouped[type] = {};
+      const type = getPriorityType(feature.requirement_type).toLowerCase();
+      const capitalizedType = type.charAt(0).toUpperCase() + type.slice(1);
+      if (!grouped[capitalizedType]) {
+        grouped[capitalizedType] = {};
       }
-      if (!grouped[type][category.category_name]) {
-        grouped[type][category.category_name] = [];
+      if (!grouped[capitalizedType][category.category_name]) {
+        grouped[capitalizedType][category.category_name] = [];
       }
-      grouped[type][category.category_name].push(feature);
+      grouped[capitalizedType][category.category_name].push(feature);
     });
   });
 
