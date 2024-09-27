@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import logoPlaceholder from '../assets/nttlogo.png';
+import logoPlaceholder from '../assets/logo.png';
 
 const Navbar = () => {
   return (
@@ -14,16 +14,16 @@ const Navbar = () => {
               className="h-12 mr-4"
             />
           </a>
-          <h1 className="text-2xl font-bold">GenAssist</h1>
+          <h1 className="text-2xl font-bold">Modernization Wizard</h1>
         </div>
-        {/* <div>
+        <div>
           <a href="https://crowdbotics.com/about/" target="_blank" rel="noopener noreferrer">
             <Button variant="outline" className="mr-2">About</Button>
           </a>
           <a href="https://crowdbotics.com/schedule-a-demo/" target="_blank" rel="noopener noreferrer">
             <Button variant="outline">Contact</Button>
           </a>
-        </div> */}
+        </div>
       </div>
     </nav>
   );
