@@ -19,41 +19,19 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
     setSelectedFeature(updatedFeature);
   };
 
-  // Group features by requirement type
-  const groupFeaturesByType = (categories) => {
-    return categories.map(category => ({
-      ...category,
-      featureTypes: category.features.reduce((acc, feature) => {
-        const type = feature.requirement_type[0].split(' ')[0].toLowerCase();
-        if (!acc[type]) {
-          acc[type] = [];
-        }
-        acc[type].push(feature);
-        return acc;
-      }, {})
-    }));
-  };
-
-  const groupedCategories = groupFeaturesByType(artifacts.prd);
-
   return (
     <Tabs defaultValue="systemSpec" className="bg-white rounded-lg p-4">
       <TabsList>
-        {/* <TabsTrigger value="technicalSummary">Technical Summary</TabsTrigger> */}
         <TabsTrigger value="systemSpec">System Specification</TabsTrigger>
         <TabsTrigger value="userTypes">User Types</TabsTrigger>
         <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
         <TabsTrigger value="dependencyGraph">Dependency Graph</TabsTrigger>
-        {/* <TabsTrigger value="dataModels">Data Models</TabsTrigger> */}
       </TabsList>
-      <TabsContent value="technicalSummary">
-        <ArtifactPanel title="Technical Summary" content={artifacts.technicalSummary} />
-      </TabsContent>
       <TabsContent value="systemSpec">
         <div className="flex">
           <div className="w-2/5 pr-2">
             <PRDTreeView 
-              data={groupedCategories} 
+              data={artifacts.prd} 
               onSelect={handleFeatureSelect}
               selectedFeature={selectedFeature}
             />
@@ -75,10 +53,6 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
       <TabsContent value="dependencyGraph">
         <DependencyGraph data={artifacts} />
       </TabsContent>
-      <TabsContent value="dataModels">
-        <ERDComponent data={artifacts.dataModels} />
-      </TabsContent>
-      
     </Tabs>
   );
 };
