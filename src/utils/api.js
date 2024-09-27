@@ -1,4 +1,4 @@
-const API_URL = 'https://c629-74-14-7-169.ngrok-free.app';
+const API_URL = 'https://f2dc-74-14-7-169.ngrok-free.app';
 
 export const fetchWithApiUrl = async (endpoint, options = {}) => {
   const url = `${API_URL}${endpoint}`;
