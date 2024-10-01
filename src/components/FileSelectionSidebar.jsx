@@ -22,7 +22,7 @@ const FileSelectionSidebar = ({ onFilesSelected }) => {
   };
 
   return (
-    <div className="bg-gray-100 p-4 flex flex-col h-full">
+    <div className="bg-gray-100 p-4 flex flex-col">
       <h3 className="text-lg font-semibold mb-4">Knowledge Library</h3>
       <input
         type="file"
@@ -31,7 +31,7 @@ const FileSelectionSidebar = ({ onFilesSelected }) => {
         accept=".csv,.pdf,.docx"
         className="mb-4"
       />
-      <div className="flex-grow overflow-auto">
+      <div className="mb-4">
         {selectedFiles.map((file, index) => (
           <div key={index} className="flex justify-between items-center mb-2">
             <span className="truncate">{file.name}</span>
@@ -42,7 +42,7 @@ const FileSelectionSidebar = ({ onFilesSelected }) => {
         ))}
       </div>
       <Button 
-        className="w-full mt-4"
+        className="w-full"
         onClick={handleSubmit}
         disabled={selectedFiles.length === 0}
       >
