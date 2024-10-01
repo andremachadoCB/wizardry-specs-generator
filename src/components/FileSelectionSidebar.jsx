@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { X } from 'lucide-react';
 
 const FileSelectionSidebar = ({ onFilesSelected }) => {
@@ -23,7 +22,7 @@ const FileSelectionSidebar = ({ onFilesSelected }) => {
   };
 
   return (
-    <div className="w-1/5 bg-gray-100 p-4">
+    <div className="bg-gray-100 p-4 flex flex-col h-full">
       <h3 className="text-lg font-semibold mb-4">Knowledge Library</h3>
       <input
         type="file"
@@ -32,16 +31,16 @@ const FileSelectionSidebar = ({ onFilesSelected }) => {
         accept=".csv,.pdf,.docx"
         className="mb-4"
       />
-      <ScrollArea className="h-[calc(100vh-300px)] w-full border rounded-md p-4">
+      <div className="flex-grow overflow-auto">
         {selectedFiles.map((file, index) => (
           <div key={index} className="flex justify-between items-center mb-2">
-            <span>{file.name}</span>
+            <span className="truncate">{file.name}</span>
             <Button variant="ghost" size="sm" onClick={() => removeFile(file)}>
               <X className="h-4 w-4" />
             </Button>
           </div>
         ))}
-      </ScrollArea>
+      </div>
       <Button 
         className="w-full mt-4"
         onClick={handleSubmit}
