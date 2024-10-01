@@ -24,7 +24,7 @@ const FileSelectionSidebar = ({ onFilesSelected }) => {
 
   return (
     <div className="w-1/5 bg-gray-100 p-4">
-      <h3 className="text-lg font-semibold mb-4">Additional Files</h3>
+      <h3 className="text-lg font-semibold mb-4">Knowledge Library</h3>
       <input
         type="file"
         onChange={handleFileChange}
