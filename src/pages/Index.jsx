@@ -164,19 +164,17 @@ const Index = () => {
       </div>
       <Separator className="my-4" />
       <div className="flex flex-1 overflow-hidden">
-        <div className="w-1/5 flex flex-col">
-          <FileExplorer
-            selectedRepo={selectedRepo}
-            onSelectFile={handleFileSelect}
-            shouldLoadFiles={shouldLoadFiles}
-            handleLoadFiles={handleLoadFiles}
-            selectedFile={selectedFile}
-          />
-          <Separator className="my-4" />
-          <FileSelectionSidebar onFilesSelected={handleAdditionalFilesSelected} />
-        </div>
+        <FileExplorer
+          selectedRepo={selectedRepo}
+          onSelectFile={handleFileSelect}
+          shouldLoadFiles={shouldLoadFiles}
+          handleLoadFiles={handleLoadFiles}
+          selectedFile={selectedFile}
+        />
         <Separator orientation="vertical" className="mx-4" />
-        <div className="w-4/5 p-4 overflow-auto">
+        <FileSelectionSidebar onFilesSelected={handleAdditionalFilesSelected} />
+        <Separator orientation="vertical" className="mx-4" />
+        <div className="w-3/5 p-4 overflow-auto">
           <FilePreview content={fileContent} />
           <div className="mb-4 sticky top-0 bg-white z-10 p-4 shadow-md">
             <Button 
