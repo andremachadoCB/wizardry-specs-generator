@@ -10,6 +10,7 @@ import ArtifactTabs from '../components/ArtifactTabs';
 import Navbar from '../components/Navbar';
 import SettingsPanel from '../components/SettingsPanel';
 import FilePreview from '../components/FilePreview';
+import FileSelectionSidebar from '../components/FileSelectionSidebar';
 
 const Index = () => {
   const [selectedRepo, setSelectedRepo] = useState('https://github.com/aws-samples/aws-mainframe-modernization-carddemo/tree/main');
@@ -17,6 +18,7 @@ const Index = () => {
   const [shouldLoadFiles, setShouldLoadFiles] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState('English');
   const [fileContent, setFileContent] = useState('');
+  const [additionalFiles, setAdditionalFiles] = useState([]);
   const [artifacts, setArtifacts] = useState({
     filePath: '',
     technicalSummary: '',
@@ -28,13 +30,26 @@ const Index = () => {
   });
 
   const fileAnalysisMutation = useMutation({
-    mutationFn: ({ url, file_path }) => fetchWithApiUrl('/api/repos/file/reason', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ url, file_path, language: selectedLanguage }),
-    }),
+    mutationFn: async ({ url, file_path, additionalFiles }) => {
+      const formData = new FormData();
+      formData.append('url', url);
+      formData.append('file_path', file_path);
+      formData.append('language', selectedLanguage);
+      additionalFiles.forEach((file, index) => {
+        formData.append(`additional_file_${index}`, file);
+      });
+
+      const response = await fetch(`${API_URL}/api/repos/file/reason`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      return response.json();
+    },
     onSuccess: (data) => {
       setArtifacts({
         filePath: data.file_path,
@@ -83,7 +98,7 @@ const Index = () => {
         await fileAnalysisMutation.mutateAsync({ 
           url: selectedRepo, 
           file_path: selectedFile,
-          language: selectedLanguage,
+          additionalFiles,
         });
       } catch (error) {
         console.error('Error generating specs:', error);
@@ -128,6 +143,10 @@ const Index = () => {
     }));
   };
 
+  const handleAdditionalFilesSelected = (files) => {
+    setAdditionalFiles(files);
+  };
+
   const isGenerateDisabled = !selectedRepo || !selectedFile || fileAnalysisMutation.isPending;
 
   return (
@@ -153,7 +172,9 @@ const Index = () => {
           selectedFile={selectedFile}
         />
         <Separator orientation="vertical" className="mx-4" />
-        <div className="w-4/5 p-4 overflow-auto">
+        <FileSelectionSidebar onFilesSelected={handleAdditionalFilesSelected} />
+        <Separator orientation="vertical" className="mx-4" />
+        <div className="w-3/5 p-4 overflow-auto">
           <FilePreview content={fileContent} />
           <div className="mb-4 sticky top-0 bg-white z-10 p-4 shadow-md">
             <Button 
