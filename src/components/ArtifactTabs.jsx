@@ -26,7 +26,6 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
         <TabsTrigger value="userTypes">User Types</TabsTrigger>
         <TabsTrigger value="knowledgeGraph">Knowledge Graph</TabsTrigger>
         <TabsTrigger value="dependencyGraph">Dependency Graph</TabsTrigger>
-        <TabsTrigger value="erd">Data Models</TabsTrigger>
       </TabsList>
       <TabsContent value="systemSpec">
         <div className="flex">
@@ -53,9 +52,6 @@ const ArtifactTabs = ({ artifacts, onFeatureUpdate }) => {
       </TabsContent>
       <TabsContent value="dependencyGraph">
         <DependencyGraph data={artifacts} />
-      </TabsContent>
-      <TabsContent value="erd">
-        <ERDComponent data={artifacts.dataModels} />
       </TabsContent>
     </Tabs>
   );
