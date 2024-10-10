@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 
 const PRDFeatureDetail = ({ feature, onUpdate }) => {
   const [description, setDescription] = useState('');
   const [acceptanceCriteria, setAcceptanceCriteria] = useState('');
+  const [businessLogic, setBusinessLogic] = useState('');
 
   useEffect(() => {
     setDescription(feature?.description || '');
     setAcceptanceCriteria(feature?.acceptance_criteria.join('\n') || []);
+    setBusinessLogic(feature?.business_logic || '');
   }, [feature]);
 
   const handleChangeAcceptanceCriteria = (e) => {
@@ -19,6 +20,10 @@ const PRDFeatureDetail = ({ feature, onUpdate }) => {
 
   const handleChangeDescription = (e) => {
     setDescription(e.target.value);
+  };
+
+  const handleChangeBusinessLogic = (e) => {
+    setBusinessLogic(e.target.value);
   };
     
 
@@ -46,6 +51,16 @@ const PRDFeatureDetail = ({ feature, onUpdate }) => {
             onChange={handleChangeDescription}
             className="mt-1 h-40"
             placeholder="Enter feature description..."
+          />
+        </div>
+        <div>
+          <Label htmlFor="business_logic">Business Logic</Label>
+          <Textarea
+            id="business_logic"
+            value={businessLogic}
+            onChange={handleChangeBusinessLogic}
+            className="mt-1 h-40"
+            placeholder="Enter business logic..."
           />
         </div>
         <div>

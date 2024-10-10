@@ -22,6 +22,15 @@ const FeatureDetail = ({ feature, onUpdate }) => {
         />
       </div>
       <div>
+        <Label htmlFor="business_logc">Business Logic</Label>
+        <Textarea
+          id="business_logic"
+          value={feature.business_logic}
+          onChange={handleChange('business_logic')}
+          className="mt-1"
+        />
+      </div>
+      <div>
         <Label htmlFor="acceptance_criteria">Acceptance Criteria</Label>
         <Textarea
           id="acceptance_criteria"
