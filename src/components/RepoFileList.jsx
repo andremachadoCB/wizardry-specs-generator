@@ -5,6 +5,8 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchWithApiUrl } from '../utils/api';
 import { Button } from "@/components/ui/button";
 
+const GITHUB_URL_PATTERN = /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+(\/.*)?$/;
+
 const TreeNode = ({ node, onSelectFile, selectedFile }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -60,6 +62,8 @@ const FileTreeSkeleton = () => (
 );
 
 const RepoFileList = ({ repoUrl, onSelectFile, shouldLoadFiles, selectedFile }) => {
+  const isValidRepoUrl = GITHUB_URL_PATTERN.test(repoUrl);
+
   const { data: fileStructure, isLoading, error, refetch } = useQuery({
     queryKey: ['repoTree', repoUrl],
     queryFn: () => fetchWithApiUrl('/api/repos/tree', {
@@ -69,11 +73,24 @@ const RepoFileList = ({ repoUrl, onSelectFile, shouldLoadFiles, selectedFile }) 
       },
       body: JSON.stringify({ url: repoUrl }),
     }),
-    enabled: !!repoUrl && shouldLoadFiles,
+    enabled: !!repoUrl && shouldLoadFiles && isValidRepoUrl,
     retry: 1,
+    onError: (err) => console.error('[RepoFileList] Failed to fetch repo tree:', err),
   });
 
   if (!shouldLoadFiles) return null;
+
+  if (shouldLoadFiles && !isValidRepoUrl) {
+    return (
+      <div className="mt-4">
+        <h3 className="text-lg font-semibold mb-2">Repository Files:</h3>
+        <div className="border rounded-md p-4 flex flex-col items-center gap-3 text-center">
+          <AlertCircle className="w-8 h-8 text-yellow-500" />
+          <p className="text-sm text-gray-600">Please enter a valid GitHub URL to load files.</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -93,9 +110,7 @@ const RepoFileList = ({ repoUrl, onSelectFile, shouldLoadFiles, selectedFile }) 
         <div className="border rounded-md p-4 flex flex-col items-center gap-3 text-center">
           <AlertCircle className="w-8 h-8 text-red-500" />
           <p className="text-sm text-gray-600">
-            Failed to load repository files.
-            <br />
-            <span className="text-xs text-gray-400">{error.message}</span>
+            Failed to load repository files. Please check the URL and try again.
           </p>
           <Button variant="outline" size="sm" onClick={() => refetch()}>
             <RefreshCw className="w-4 h-4 mr-2" />
