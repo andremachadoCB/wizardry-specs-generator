@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
-const GITHUB_URL_PATTERN = /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+(\/.*)?$/;
+import { isValidGithubUrl } from '../utils/validation';
 
 const RepoSelector = ({ selectedRepo, onSelectRepo }) => {
   const [touched, setTouched] = useState(false);
 
-  const isInvalid = touched && selectedRepo.length > 0 && !GITHUB_URL_PATTERN.test(selectedRepo);
+  const trimmed = selectedRepo.trim();
+  const isInvalid = touched && trimmed.length > 0 && !isValidGithubUrl(trimmed);
+
+  const handleChange = (e) => {
+    onSelectRepo(e.target.value);
+  };
+
+  const handleBlur = () => {
+    setTouched(true);
+    if (selectedRepo !== trimmed) {
+      onSelectRepo(trimmed);
+    }
+  };
 
   return (
     <div className="mb-4">
@@ -17,8 +28,8 @@ const RepoSelector = ({ selectedRepo, onSelectRepo }) => {
         type="text"
         placeholder="https://github.com/username/repo"
         value={selectedRepo}
-        onChange={(e) => onSelectRepo(e.target.value)}
-        onBlur={() => setTouched(true)}
+        onChange={handleChange}
+        onBlur={handleBlur}
         className={`w-full ${isInvalid ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
       />
       {isInvalid && (
